@@ -1,0 +1,13 @@
+  ___________ _____ _      _
+ /  ___| ___ \  ___| |    | |
+ \ `--.| |_/ / |__ | |    | |
+  `--. \  __/|  __|| |    | |
+ /\__/ / |   | |___| |____| |____
+ \____/\_|   \____/\_____/\_____/
+  ------------------------${application.formatted-version}
+
+  This CLI generates quickstart projects using https://start.spring.io that can be easily customized.
+  Possible customizations include a project's dependencies, Java version, and build system or
+  build structure.
+
+  Type "help" for more information.
