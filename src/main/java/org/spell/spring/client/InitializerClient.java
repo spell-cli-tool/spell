@@ -12,14 +12,20 @@ public class InitializerClient {
   private final RestTemplate restTemplate = new RestTemplate();
   private final InitializerRestProperties properties;
 
-  public String getSettings() {
+  public String retrieveSettingsInfo() {
     return restTemplate.getForObject(properties.getAddress(), String.class);
   }
 
-  public MetadataDto getMetadata() {
+  public MetadataDto retrieveMetadata() {
     MetadataDto response = restTemplate.getForObject(
         properties.getAddress() + properties.getMetadataPath(),
         MetadataDto.class);
     return response;
+  }
+
+  public byte[] downloadProject(String request) {
+    return restTemplate.getForObject(
+        properties.getAddress() + request,
+        byte[].class);
   }
 }
