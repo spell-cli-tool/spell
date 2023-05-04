@@ -80,7 +80,7 @@ public class InitializerService {
     return retrieveSelectorItems(metadata.getJavaVersion().getValues());
   }
 
-  public List<SelectorItem<String>> retrieveDependencies() {
+  public List<SelectorItem<String>> retrieveDependenciesForSelection() {
     var result = new ArrayList<SelectorItem<String>>();
     MetadataDto metadata = retrieveMetadata();
 
@@ -89,6 +89,29 @@ public class InitializerService {
           group.getId(), false, false));
       for (DependenciesValue value : group.getValues()) {
         result.add(SelectorItem.of(value.getName(), value.getId()));
+      }
+    }
+    return result;
+  }
+
+  public List<SelectorItem<String>> retrieveDependenciesForSingleSelection() {
+    var result = new ArrayList<SelectorItem<String>>();
+    MetadataDto metadata = retrieveMetadata();
+
+    for (DependenciesGroup group : metadata.getDependencies().getValues()) {
+      for (DependenciesValue value : group.getValues()) {
+        result.add(SelectorItem.of(value.getName(), value.getId()));
+      }
+    }
+    return result;
+  }
+
+  public List<String> retrieveDependenciesId() {
+    var result = new ArrayList<String>();
+    MetadataDto metadata = retrieveMetadata();
+    for (DependenciesGroup group : metadata.getDependencies().getValues()) {
+      for (DependenciesValue value : group.getValues()) {
+        result.add(value.getId());
       }
     }
     return result;

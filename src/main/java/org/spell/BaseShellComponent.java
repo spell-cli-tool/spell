@@ -1,4 +1,4 @@
-package org.spell.spring;
+package org.spell;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,10 +40,8 @@ public abstract class BaseShellComponent extends AbstractShellComponent {
     MultiItemSelectorContext<String, SelectorItem<String>> context = component
         .run(MultiItemSelectorContext.empty());
 
-    List<String> result = context.getResultItems().stream()
+    return context.getResultItems().stream()
         .map(si -> si.getItem())
         .collect(Collectors.toList());
-    return result;
   }
-
 }
