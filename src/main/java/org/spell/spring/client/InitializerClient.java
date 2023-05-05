@@ -1,6 +1,7 @@
 package org.spell.spring.client;
 
 import lombok.RequiredArgsConstructor;
+import org.spell.spring.Action;
 import org.spell.spring.client.model.MetadataDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -23,9 +24,9 @@ public class InitializerClient {
     return response;
   }
 
-  public byte[] downloadProject(String request) {
+  public byte[] download(Action action, String params) {
     return restTemplate.getForObject(
-        properties.getAddress() + request,
+        properties.getAddress() + action.getValue() + params,
         byte[].class);
   }
 }

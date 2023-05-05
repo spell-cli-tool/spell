@@ -2,6 +2,7 @@ package org.spell.spring.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.RequiredArgsConstructor;
+import org.spell.spring.Action;
 import org.spell.spring.client.InitializerClient;
 import org.spell.spring.client.InitializerRestProperties;
 import org.spell.spring.client.model.DependenciesGroup;
@@ -117,8 +119,26 @@ public class InitializerService {
     return result;
   }
 
-  public void downloadProject(String request) {
-    byte[] zip = client.downloadProject(request);
+  public void download(Action action, String params) {
+    switch (action) {
+      case STARTER_ZIP -> downloadProject(params);
+      case BUILD_GRADLE -> downLoadBuildGradle(params);
+      case POM_XML -> downLoadPomXml(params);
+    }
+  }
+
+  public void downLoadBuildGradle(String request) {
+    byte[] file = client.download(Action.BUILD_GRADLE, request);
+    saveFile("gradle.build", file);
+  }
+
+  public void downLoadPomXml(String params) {
+    byte[] file = client.download(Action.POM_XML, params);
+    saveFile("pom.xml", file);
+  }
+
+  public void downloadProject(String params) {
+    byte[] zip = client.download(Action.STARTER_ZIP, params);
 
     File destDir = new File(System.getProperty("user.dir"));
     byte[] buffer = new byte[1024];
@@ -175,5 +195,15 @@ public class InitializerService {
         .collect(Collectors.toList());
   }
 
+  public void saveFile(String name, byte[] file) {
+    File outputFile = new File(name);
+    try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+      outputStream.write(file);
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
 }

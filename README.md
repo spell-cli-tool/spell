@@ -8,7 +8,7 @@
       Y88b  d88P 888        888        888      888
        "Y8888P"  888        8888888888 88888888 88888888
 
-This CLI generates quickstart projects using https://start.spring.io that can be easily customized.
+This CLI uses https://start.spring.io to generate quickstart projects that can be easily customized.
 Possible customizations include a project's dependencies, Java version, and build system or
 build structure.
 
@@ -17,15 +17,15 @@ Type "help" for more information.
 Built-In Commands
 
     help: Display help about available commands
-    stacktrace: Display the full stacktrace of the last error.
-    clear: Clear the shell screen.
-    quit, exit: Exit the shell.
+    stacktrace: Display the full stacktrace of the last error
+    clear: Clear the shell screen
+    quit, exit: Exit the shell
     history: Display or save the history of previously run commands
     version: Show version info
-    script: Read and execute commands from a file.
+    script: Read and execute commands from a file
 
 Spring Initializer Commands
 
+    dependency: Show dependency details
     create: Create Spring Boot project
-    info: Show Spring Initializer settings details
-
+    info: Show all Spring Initializer settings details

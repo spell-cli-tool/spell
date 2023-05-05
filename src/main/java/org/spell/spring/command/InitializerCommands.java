@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.jline.utils.AttributedStyle;
 import org.spell.BaseShellComponent;
 import org.spell.ShellHelper;
+import org.spell.spring.Action;
 import org.spell.spring.DependencyValuesProvider;
 import org.spell.spring.client.model.DependenciesGroup;
 import org.spell.spring.client.model.DependenciesValue;
@@ -71,9 +72,10 @@ public class InitializerCommands extends BaseShellComponent {
                     );
                 }
               }
+              shellHelper.emptyLine();
             }
           }
-          shellHelper.emptyLine();
+
           return;
         }
       }
@@ -87,30 +89,28 @@ public class InitializerCommands extends BaseShellComponent {
 
   @ShellMethod(key = "create", value = "Create Spring Boot project.")
   public String create() {
-    StringBuilder request = new StringBuilder();
+    StringBuilder params = new StringBuilder();
     String type = selectType();
     String action = service.retrieveActionByTypeId(type);
-    request.append(action);
-    request.append("?type=" + type);
-    request.append("&language=" + selectLanguage());
-    request.append("&bootVersion=" + selectSpringBootVersion());
+    params.append("?type=" + type);
+    params.append("&language=" + selectLanguage());
+    params.append("&bootVersion=" + selectSpringBootVersion());
     String groupId = setInput("Group", "com.example");
-    request.append("&groupId=" + groupId);
+    params.append("&groupId=" + groupId);
     String artifactId = setInput("Artifact", "demo");
-    request.append("&artifactId=" + artifactId);
+    params.append("&artifactId=" + artifactId);
     String name = setInput("Name", artifactId);
-    request.append("&name=" + name);
-    request.append("&baseDir=" + name);
-    request.append("&description="
-        + setInput("Description", "Demo project for Spring Boot")
-        .replace(" ", "%20"));
-    request.append("&packageName="
+    params.append("&name=" + name);
+    params.append("&baseDir=" + name);
+    params.append("&description="
+        + setInput("Description", "Demo project for Spring Boot"));
+    params.append("&packageName="
         + setInput("Package name", groupId + "." + artifactId));
-    request.append("&packaging=" + selectPackaging());
-    request.append("&javaVersion=" + selectJavaVersion());
-    request.append("&dependencies="  + selectMultipleDependencies());
+    params.append("&packaging=" + selectPackaging());
+    params.append("&javaVersion=" + selectJavaVersion());
+    params.append("&dependencies="  + selectMultipleDependencies());
 
-    service.downloadProject(request.toString());
+    service.download(Action.getFromValue(action), params.toString());
 
     return String.format("The project '%s' is successfully created!", name);
   }
