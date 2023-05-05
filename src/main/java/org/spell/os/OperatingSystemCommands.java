@@ -15,7 +15,7 @@ public class OperatingSystemCommands {
 
   private final ShellHelper shellHelper;
 
-  @ShellMethod(key = "pwd", value = "Show full path of the current directory")
+  @ShellMethod(key = "pwd", value = "Show full path to the current directory")
   public String pwd() {
     return System.getProperty("user.dir");
   }

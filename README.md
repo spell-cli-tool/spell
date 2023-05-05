@@ -24,6 +24,11 @@ Built-In Commands
     version: Show version info
     script: Read and execute commands from a file
 
+Operating System Commands
+
+    ls: Show list of files and directories
+    pwd: Show full path to the current directory
+
 Spring Initializer Commands
 
     dependency: Show dependency details
