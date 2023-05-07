@@ -12,6 +12,7 @@ import org.spell.spring.client.model.DependenciesValue;
 import org.spell.spring.client.model.Guide;
 import org.spell.spring.client.model.MetadataDto;
 import org.spell.spring.client.model.Reference;
+import org.spell.spring.constant.InitializerConstant;
 import org.spell.spring.service.InitializerService;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -22,11 +23,14 @@ import org.springframework.util.StringUtils;
 
 @ShellComponent
 @ShellCommandGroup("Spring Initializer Commands")
-@RequiredArgsConstructor
 public class InitializerCommands extends BaseShellComponent {
 
   private final InitializerService service;
-  private final ShellHelper shellHelper;
+
+  public InitializerCommands(InitializerService service, ShellHelper shellHelper) {
+    super(shellHelper);
+    this.service = service;
+  }
 
   @ShellMethod(key = "dependency", value = "Show dependency details.")
   public void dependency(
@@ -44,13 +48,15 @@ public class InitializerCommands extends BaseShellComponent {
     for (DependenciesGroup group : metadata.getDependencies().getValues()) {
       for (DependenciesValue value : group.getValues()) {
         if (value.getId().equals(name)) {
-          shellHelper.print(value.getName(), AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA).bold().underline());
+          shellHelper.print(value.getName(),
+              AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA).bold().underline());
           shellHelper.print(value.getDescription());
           shellHelper.emptyLine();
           if (value.getLinks() != null) {
             List<Guide> guides = value.getLinks().retrieveGuides();
             if (!CollectionUtils.isEmpty(guides)) {
-              shellHelper.print("Guides:", AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
+              shellHelper.print("Guides:",
+                  AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
               for (Guide guide : guides) {
                 shellHelper.print(guide.getTitle());
                 shellHelper.print(guide.getHref());
@@ -60,7 +66,8 @@ public class InitializerCommands extends BaseShellComponent {
 
             List<Reference> references = value.getLinks().retrieveReferences();
             if (!CollectionUtils.isEmpty(references)) {
-              shellHelper.print("References:", AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
+              shellHelper.print("References:",
+                  AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
               for (Reference reference : references) {
                 if (!reference.getTemplated()) {
                   shellHelper.print(reference.getHref());
@@ -88,16 +95,18 @@ public class InitializerCommands extends BaseShellComponent {
   }
 
   @ShellMethod(key = "create", value = "Create Spring Boot project.")
-  public String create() {
+  public void create() {
     StringBuilder params = new StringBuilder();
     String type = selectType();
     String action = service.retrieveActionByTypeId(type);
     params.append("?type=" + type);
     params.append("&language=" + selectLanguage());
     params.append("&bootVersion=" + selectSpringBootVersion());
-    String groupId = setInput("Group", "com.example");
+    String groupId = setInput("Group", "com.example",
+        InitializerConstant.GROUP_PATTERN);
     params.append("&groupId=" + groupId);
-    String artifactId = setInput("Artifact", "demo");
+    String artifactId = setInput("Artifact", "demo",
+        InitializerConstant.ARTIFACT_PATTERN);
     params.append("&artifactId=" + artifactId);
     String name = setInput("Name", artifactId);
     params.append("&name=" + name);
@@ -112,7 +121,8 @@ public class InitializerCommands extends BaseShellComponent {
 
     service.download(Action.getFromValue(action), params.toString());
 
-    return String.format("The project '%s' is successfully created!", name);
+    shellHelper.print(String.format("The project '%s' is successfully created!", name),
+        AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
   }
 
   private String selectType() {
