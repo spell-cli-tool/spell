@@ -1,15 +1,16 @@
 package org.spell;
 
+import lombok.RequiredArgsConstructor;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class ShellHelper {
-  private final Terminal terminal;
 
-  public ShellHelper(Terminal terminal) {
-    this.terminal = terminal;
-  }
+  private final Terminal terminal;
 
   public String getStyledMessage(String message, AttributedStyle attributedStyle) {
     return (new AttributedStringBuilder()).append(message, attributedStyle).toAnsi();
