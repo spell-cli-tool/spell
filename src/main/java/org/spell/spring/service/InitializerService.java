@@ -82,7 +82,7 @@ public class InitializerService {
     return retrieveSelectorItems(metadata.getJavaVersion().getValues());
   }
 
-  public List<SelectorItem<String>> retrieveDependenciesForSelection() {
+  public List<SelectorItem<String>> retrieveDependenciesWithGroups() {
     var result = new ArrayList<SelectorItem<String>>();
     MetadataDto metadata = retrieveMetadata();
 
@@ -96,7 +96,7 @@ public class InitializerService {
     return result;
   }
 
-  public List<SelectorItem<String>> retrieveDependenciesForSingleSelection() {
+  public List<SelectorItem<String>> retrieveDependenciesWithoutGroups() {
     var result = new ArrayList<SelectorItem<String>>();
     MetadataDto metadata = retrieveMetadata();
 

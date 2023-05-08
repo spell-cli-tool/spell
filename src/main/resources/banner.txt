@@ -9,7 +9,7 @@
        "Y8888P"  888        8888888888 88888888 88888888
       --------------------------------${application.formatted-version}
 
-  This CLI generates quickstart projects using https://start.spring.io
+  This CLI uses https://start.spring.io to generate quickstart projects
   that can be easily customized.
   Possible customizations include a project's dependencies, Java version,
   and build system or build structure.

@@ -1,12 +1,10 @@
 package org.spell.spring.command;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.jline.utils.AttributedStyle;
 import org.spell.BaseShellComponent;
 import org.spell.ShellHelper;
 import org.spell.spring.Action;
-import org.spell.spring.DependencyValuesProvider;
 import org.spell.spring.client.model.DependenciesGroup;
 import org.spell.spring.client.model.DependenciesValue;
 import org.spell.spring.client.model.Guide;
@@ -17,9 +15,7 @@ import org.spell.spring.service.InitializerService;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 @ShellComponent
 @ShellCommandGroup("Spring Initializer Commands")
@@ -32,58 +28,56 @@ public class InitializerCommands extends BaseShellComponent {
     this.service = service;
   }
 
-  @ShellMethod(key = "dependency", value = "Show dependency details.")
-  public void dependency(
-      @ShellOption(valueProvider = DependencyValuesProvider.class,
-          value = {"-n", "--name"}, defaultValue = "") String name) {
+  @ShellMethod(key = "dependency", value = "Show details of selected dependencies.")
+  public void dependency() {
 
     MetadataDto metadata = service.retrieveMetadata();
-
-    if (!StringUtils.hasText(name)) {
-        name = selectSingleDependency();
-    }
+    List<String> names = selectDependenciesForDetails();
 
     shellHelper.emptyLine();
 
-    for (DependenciesGroup group : metadata.getDependencies().getValues()) {
-      for (DependenciesValue value : group.getValues()) {
-        if (value.getId().equals(name)) {
-          shellHelper.print(value.getName(),
-              AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA).bold().underline());
-          shellHelper.print(value.getDescription());
-          shellHelper.emptyLine();
-          if (value.getLinks() != null) {
-            List<Guide> guides = value.getLinks().retrieveGuides();
-            if (!CollectionUtils.isEmpty(guides)) {
-              shellHelper.print("Guides:",
-                  AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
-              for (Guide guide : guides) {
-                shellHelper.print(guide.getTitle());
-                shellHelper.print(guide.getHref());
-              }
-              shellHelper.emptyLine();
-            }
-
-            List<Reference> references = value.getLinks().retrieveReferences();
-            if (!CollectionUtils.isEmpty(references)) {
-              shellHelper.print("References:",
-                  AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
-              for (Reference reference : references) {
-                if (!reference.getTemplated()) {
-                  shellHelper.print(reference.getHref());
-                } else {
-                  metadata
-                    .getBootVersion()
-                    .getValues()
-                    .forEach(bv -> shellHelper.print(reference.getHref().replace("{bootVersion}", bv.getId()))
-                    );
+    for (String name : names) {
+      dependenciesLoop:
+      for (DependenciesGroup group : metadata.getDependencies().getValues()) {
+        for (DependenciesValue value : group.getValues()) {
+          if (value.getId().equals(name)) {
+            shellHelper.print(value.getName(),
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA).bold().underline());
+            shellHelper.print(value.getDescription());
+            shellHelper.emptyLine();
+            if (value.getLinks() != null) {
+              List<Guide> guides = value.getLinks().retrieveGuides();
+              if (!CollectionUtils.isEmpty(guides)) {
+                shellHelper.print("Guides:",
+                    AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
+                for (Guide guide : guides) {
+                  shellHelper.print(guide.getTitle());
+                  shellHelper.print(guide.getHref());
                 }
+                shellHelper.emptyLine();
               }
-              shellHelper.emptyLine();
-            }
-          }
 
-          return;
+              List<Reference> references = value.getLinks().retrieveReferences();
+              if (!CollectionUtils.isEmpty(references)) {
+                shellHelper.print("References:",
+                    AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
+                for (Reference reference : references) {
+                  if (!reference.getTemplated()) {
+                    shellHelper.print(reference.getHref());
+                  } else {
+                    metadata
+                        .getBootVersion()
+                        .getValues()
+                        .forEach(bv -> shellHelper.print(
+                            reference.getHref().replace("{bootVersion}", bv.getId()))
+                        );
+                  }
+                }
+                shellHelper.emptyLine();
+              }
+            }
+            break dependenciesLoop;
+          }
         }
       }
     }
@@ -151,13 +145,13 @@ public class InitializerCommands extends BaseShellComponent {
   }
 
   private String selectMultipleDependencies() {
-    var items = service.retrieveDependenciesForSelection();
+    var items = service.retrieveDependenciesWithGroups();
     return String.join(",", selectMultipleItems("Dependencies", items));
   }
 
-  private String selectSingleDependency() {
-    var items = service.retrieveDependenciesForSingleSelection();
-    return selectSingleItem("Dependencies details", items);
+  private List<String> selectDependenciesForDetails() {
+    var items = service.retrieveDependenciesWithoutGroups();
+    return selectMultipleItems("Dependencies details", items);
   }
 
 }

@@ -31,6 +31,6 @@ Operating System Commands
 
 Spring Initializer Commands
 
-    dependency: Show dependency details
+    dependency: Show details of selected dependencies
     create: Create Spring Boot project
     info: Show all Spring Initializer settings details
