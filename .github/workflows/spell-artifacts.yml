@@ -1,6 +1,8 @@
-name: Java CI Jar
+name: Spell CI
 
-on: [push]
+on:
+  push:
+    branches: ["artifact"]
 
 jobs:
   build-jar:
@@ -22,7 +24,7 @@ jobs:
         with:
           name: package-jar
           path: build/libs
-  build-native:
+  build-native-ubuntu:
     name: ${{ matrix.version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -46,5 +48,5 @@ jobs:
           arguments: nativeCompile
       - uses: actions/upload-artifact@v3
         with:
-          name: package-native
+          name: package-native-${{ matrix.os }}
           path: build/native/nativeCompile
