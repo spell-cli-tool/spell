@@ -83,11 +83,6 @@ public class InitializerCommands extends BaseShellComponent {
     }
   }
 
-  @ShellMethod(key = "info", value = "Show all Spring Initializer settings details.")
-  public String info() {
-    return service.retrieveSettingsInfo();
-  }
-
   @ShellMethod(key = "create", value = "Create Spring Boot project.")
   public void create() {
     StringBuilder params = new StringBuilder();

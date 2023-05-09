@@ -33,4 +33,3 @@ Spring Initializer Commands
 
     dependency: Show details of selected dependencies
     create: Create Spring Boot project
-    info: Show all Spring Initializer settings details
