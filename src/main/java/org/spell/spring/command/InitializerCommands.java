@@ -89,7 +89,7 @@ public class InitializerCommands extends BaseShellComponent {
   public void interactiveCreate() {
     StringBuilder params = new StringBuilder();
     String type = selectType();
-    String action = service.retrieveActionByTypeId(type);
+    String actionValue = service.retrieveActionByTypeId(type);
     params.append("?type=" + type);
     params.append("&language=" + selectLanguage());
     params.append("&bootVersion=" + selectSpringBootVersion());
@@ -110,10 +110,17 @@ public class InitializerCommands extends BaseShellComponent {
     params.append("&javaVersion=" + selectJavaVersion());
     params.append("&dependencies="  + selectMultipleDependencies());
 
-    service.download(Action.getFromValue(action), params.toString());
+    Action action = Action.getFromValue(actionValue);
+    String projectName = service.download(action, params.toString());
 
-    shellHelper.print(String.format("The project '%s' is successfully created!", name),
-        AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold().underline());
+    String resultType = "project";
+    switch (action) {
+      case STARTER_ZIP -> resultType = "project";
+      case BUILD_GRADLE -> resultType = "gradle file";
+      case POM_XML -> resultType = "pom file";
+    }
+    shellHelper.print(String.format("The %s '%s' is successfully created!", resultType, projectName),
+        AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
   }
 
   private String selectType() {

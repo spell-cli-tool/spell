@@ -119,25 +119,37 @@ public class InitializerService {
     return result;
   }
 
-  public void download(Action action, String params) {
+  public String download(Action action, String params) {
+    String projectName = "";
+
     switch (action) {
-      case STARTER_ZIP -> downloadProject(params);
-      case BUILD_GRADLE -> downLoadBuildGradle(params);
-      case POM_XML -> downLoadPomXml(params);
+      case STARTER_ZIP -> projectName = downloadProject(params);
+      case BUILD_GRADLE -> projectName = downLoadBuildGradle(params);
+      case POM_XML -> projectName = downLoadPomXml(params);
     }
+
+    return projectName;
   }
 
-  public void downLoadBuildGradle(String request) {
+  public String downLoadBuildGradle(String request) {
     byte[] file = client.download(Action.BUILD_GRADLE, request);
-    saveFile("gradle.build", file);
+    String name = fileManager.findUniqueFileName(
+        "build", "gradle", " (%s).gradle");
+    saveFile(name, file);
+    return name;
   }
 
-  public void downLoadPomXml(String params) {
+  public String downLoadPomXml(String params) {
     byte[] file = client.download(Action.POM_XML, params);
-    saveFile("pom.xml", file);
+    String name = fileManager.findUniqueFileName(
+        "pom", "xml", " (%s).xml");
+    saveFile(name, file);
+    return name;
   }
 
-  public void downloadProject(String params) {
+  public String downloadProject(String params) {
+    String projectDirectoryName = "";
+
     byte[] zip = client.download(Action.STARTER_ZIP, params);
 
     File destDir = new File(fileManager.getCurrentDirectoryPath());
@@ -146,7 +158,6 @@ public class InitializerService {
     try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zip))) {
       ZipEntry zipEntry = zis.getNextEntry();
       String initProjectDirectoryName = "";
-      String projectDirectoryName = "";
 
       if (zipEntry != null) {
         initProjectDirectoryName = zipEntry.getName().replace(File.separator, "");
@@ -186,6 +197,8 @@ public class InitializerService {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
+    return projectDirectoryName;
   }
 
   private File newFile(File destinationDir, String name) throws IOException {

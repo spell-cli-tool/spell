@@ -69,13 +69,29 @@ public class FileManager {
     return directoryName.equals(name);
   }
 
+  public boolean isUniqueName(String name, boolean forDirectory) {
+    File[] files = getCurrentListOfFiles();
+    return isUniqueName(name, files, forDirectory);
+  }
+
+  public boolean isUniqueName(String name, File[] files, boolean forDirectory) {
+    if (files != null) {
+      for (File file : files) {
+        if (file.isDirectory() == forDirectory && file.getName().equals(name)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   public String findUniqueDirectoryName(String name) {
     File[] files = getCurrentListOfFiles();
     if (files != null) {
       for (File file : files) {
         if (file.isDirectory() && file.getName().equals(name)
             && file.listFiles() != null && file.listFiles().length > 0) {
-          name = findUniqueDirectoryName(name, files);
+          name = findUniqueDirectoryName(name, files, "__%s");
           break;
         }
       }
@@ -83,13 +99,12 @@ public class FileManager {
     return name;
   }
 
-  private String findUniqueDirectoryName(String name, File[] files) {
+  public String findUniqueDirectoryName(String name, File[] files, String suffixTemplate) {
     if (files != null) {
       for (File file : files) {
         if (file.isDirectory() && file.getName().equals(name)) {
-          if (file.listFiles() != null) {
-            name = findUniqueDirectoryName(name + "(1)", files, 2);
-          }
+          name = findUniqueName(name + String.format(suffixTemplate, 1),
+              files, true, suffixTemplate, 2);
           break;
         }
       }
@@ -98,15 +113,36 @@ public class FileManager {
     return name;
   }
 
-  private String findUniqueDirectoryName(String name, File[] files, int nextIndex) {
+  public String findUniqueFileName(String name, String extention, String suffixTemplate) {
+    File[] files = getCurrentListOfFiles();
+    String fullName = String.format("%s.%s", name, extention);
+
+    if (isUniqueName(fullName, files, false)) {
+      return fullName;
+    }
+
+    name = name + String.format(suffixTemplate, 1);
+
     if (files != null) {
       for (File file : files) {
-        if (file.isDirectory() && file.getName().equals(name)) {
-          if (file.listFiles() != null) {
-            name = findUniqueDirectoryName(
-                name.replace(String.format("(%s)", nextIndex - 1), "(" + nextIndex + ")"),
-                files, nextIndex + 1);
-          }
+        if (!file.isDirectory() && file.getName().equals(name)) {
+          name = findUniqueName(name, files, false, suffixTemplate, 2);
+          break;
+        }
+      }
+    }
+    return name;
+  }
+
+  public String findUniqueName(String name, File[] files, boolean forDirectory,
+      String suffixTemplate, int nextIndex) {
+    if (files != null) {
+      for (File file : files) {
+        if (file.isDirectory() == forDirectory && file.getName().equals(name)) {
+          name = findUniqueName(
+              name.replace(String.format(suffixTemplate, nextIndex - 1),
+                  String.format(suffixTemplate, nextIndex)),
+              files, forDirectory, suffixTemplate, nextIndex + 1);
           break;
         }
       }
