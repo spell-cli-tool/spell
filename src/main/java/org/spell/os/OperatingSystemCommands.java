@@ -24,7 +24,7 @@ public class OperatingSystemCommands {
 
   @ShellMethod(key = "ls", value = "Show list of files and directories")
   public void ls() {
-    File[] listOfFiles = fileManager.retrieveCurrentListOfFiles();
+    File[] listOfFiles = fileManager.getCurrentListOfFiles();
 
     if (listOfFiles != null && listOfFiles.length > 0) {
       for (int i = 0; i < listOfFiles.length; i++) {

@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.RequiredArgsConstructor;
+import org.spell.common.FileManager;
 import org.spell.spring.Action;
 import org.spell.spring.client.InitializerClient;
-import org.spell.spring.client.InitializerRestProperties;
 import org.spell.spring.client.model.DependenciesGroup;
 import org.spell.spring.client.model.DependenciesValue;
 import org.spell.spring.client.model.MetadataDto;
@@ -27,8 +27,8 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class InitializerService {
 
-  private final InitializerRestProperties properties;
   private final InitializerClient client;
+  private final FileManager fileManager;
 
   private String settingsInfo;
   private MetadataDto metadata;
@@ -140,25 +140,38 @@ public class InitializerService {
   public void downloadProject(String params) {
     byte[] zip = client.download(Action.STARTER_ZIP, params);
 
-    File destDir = new File(System.getProperty("user.dir"));
+    File destDir = new File(fileManager.getCurrentDirectoryPath());
     byte[] buffer = new byte[1024];
 
     try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zip))) {
       ZipEntry zipEntry = zis.getNextEntry();
+      String initProjectDirectoryName = "";
+      String projectDirectoryName = "";
+
+      if (zipEntry != null) {
+        initProjectDirectoryName = zipEntry.getName().replace(File.separator, "");
+        projectDirectoryName = initProjectDirectoryName;
+        if (fileManager.getCurrentDirectoryPath().endsWith(projectDirectoryName)
+            && fileManager.isCurrentDirectoryEmpty()) {
+          destDir = new File(fileManager.getParentDirectoryPath());
+        } else {
+          projectDirectoryName = fileManager.findUniqueDirectoryName(projectDirectoryName);
+        }
+      }
+
       while (zipEntry != null) {
-        File newFile = newFile(destDir, zipEntry);
+        String name = zipEntry.getName().replaceFirst(initProjectDirectoryName, projectDirectoryName);
+        File newFile = newFile(destDir, name);
         if (zipEntry.isDirectory()) {
           if (!newFile.isDirectory() && !newFile.mkdirs()) {
             throw new IOException("Failed to create directory " + newFile);
           }
         } else {
-          // fix for Windows-created archives
           File parent = newFile.getParentFile();
           if (!parent.isDirectory() && !parent.mkdirs()) {
             throw new IOException("Failed to create directory " + parent);
           }
 
-          // write file content
           FileOutputStream fos = new FileOutputStream(newFile);
           int len;
           while ((len = zis.read(buffer)) > 0) {
@@ -175,14 +188,14 @@ public class InitializerService {
     }
   }
 
-  private File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-    File destFile = new File(destinationDir, zipEntry.getName());
+  private File newFile(File destinationDir, String name) throws IOException {
+    File destFile = new File(destinationDir, name);
 
     String destDirPath = destinationDir.getCanonicalPath();
     String destFilePath = destFile.getCanonicalPath();
 
     if (!destFilePath.startsWith(destDirPath + File.separator)) {
-      throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+      throw new IOException("Entry is outside of the target dir: " + name);
     }
 
     return destFile;
@@ -195,7 +208,7 @@ public class InitializerService {
         .collect(Collectors.toList());
   }
 
-  public void saveFile(String name, byte[] file) {
+  private void saveFile(String name, byte[] file) {
     File outputFile = new File(name);
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
       outputStream.write(file);
