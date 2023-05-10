@@ -1,4 +1,4 @@
-package org.spell;
+package org.spell.common;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,6 @@ import org.springframework.shell.component.StringInput;
 import org.springframework.shell.component.StringInput.StringInputContext;
 import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.shell.standard.AbstractShellComponent;
-import org.springframework.util.StringUtils;
 
 public abstract class BaseShellComponent extends AbstractShellComponent {
 

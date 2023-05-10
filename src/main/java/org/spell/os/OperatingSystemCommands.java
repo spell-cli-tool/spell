@@ -3,7 +3,8 @@ package org.spell.os;
 import java.io.File;
 import lombok.RequiredArgsConstructor;
 import org.jline.utils.AttributedStyle;
-import org.spell.ShellHelper;
+import org.spell.common.FileManager;
+import org.spell.common.ShellHelper;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -14,16 +15,16 @@ import org.springframework.shell.standard.ShellMethod;
 public class OperatingSystemCommands {
 
   private final ShellHelper shellHelper;
+  private final FileManager fileManager;
 
   @ShellMethod(key = "pwd", value = "Show full path to the current directory")
   public String pwd() {
-    return System.getProperty("user.dir");
+    return fileManager.getCurrentDirectoryPath();
   }
 
   @ShellMethod(key = "ls", value = "Show list of files and directories")
   public void ls() {
-    File folder = new File(System.getProperty("user.dir"));
-    File[] listOfFiles = folder.listFiles();
+    File[] listOfFiles = fileManager.retrieveCurrentListOfFiles();
 
     if (listOfFiles != null && listOfFiles.length > 0) {
       for (int i = 0; i < listOfFiles.length; i++) {

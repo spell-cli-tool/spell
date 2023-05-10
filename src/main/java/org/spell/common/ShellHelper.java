@@ -1,4 +1,4 @@
-package org.spell;
+package org.spell.common;
 
 import lombok.RequiredArgsConstructor;
 import org.jline.terminal.Terminal;

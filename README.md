@@ -32,4 +32,4 @@ Operating System Commands
 Spring Initializer Commands
 
     dependency: Show details of selected dependencies
-    create: Create Spring Boot project
+    icreate: Create a Spring Boot project interactively

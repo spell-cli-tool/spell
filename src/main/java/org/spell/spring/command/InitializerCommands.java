@@ -2,8 +2,8 @@ package org.spell.spring.command;
 
 import java.util.List;
 import org.jline.utils.AttributedStyle;
-import org.spell.BaseShellComponent;
-import org.spell.ShellHelper;
+import org.spell.common.BaseShellComponent;
+import org.spell.common.ShellHelper;
 import org.spell.spring.Action;
 import org.spell.spring.client.model.DependenciesGroup;
 import org.spell.spring.client.model.DependenciesValue;
@@ -12,6 +12,7 @@ import org.spell.spring.client.model.MetadataDto;
 import org.spell.spring.client.model.Reference;
 import org.spell.spring.constant.InitializerConstant;
 import org.spell.spring.service.InitializerService;
+import org.springframework.shell.context.InteractionMode;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -83,8 +84,9 @@ public class InitializerCommands extends BaseShellComponent {
     }
   }
 
-  @ShellMethod(key = "create", value = "Create Spring Boot project.")
-  public void create() {
+  @ShellMethod(key = "icreate", value = "Create a Spring Boot project interactively.",
+      interactionMode = InteractionMode.INTERACTIVE)
+  public void interactiveCreate() {
     StringBuilder params = new StringBuilder();
     String type = selectType();
     String action = service.retrieveActionByTypeId(type);
