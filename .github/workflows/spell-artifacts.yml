@@ -3,6 +3,7 @@ name: Spell CI
 on:
   push:
     branches: ["artifact"]
+    tags: ["v*"]
 
 jobs:
   build-jar:
