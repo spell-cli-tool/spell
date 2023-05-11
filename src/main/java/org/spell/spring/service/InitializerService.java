@@ -165,7 +165,7 @@ public class InitializerService {
       String initProjectDirectoryName = "";
 
       if (zipEntry != null) {
-        initProjectDirectoryName = zipEntry.getName().replace(File.separator, "");
+        initProjectDirectoryName = zipEntry.getName().replace("/", "");
         projectDirectoryName = initProjectDirectoryName;
         if (fileManager.getCurrentDirectoryPath().endsWith(projectDirectoryName)
             && fileManager.isCurrentDirectoryEmpty()) {

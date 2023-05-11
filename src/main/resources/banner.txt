@@ -7,7 +7,7 @@
             "888 888        888        888      888
       Y88b  d88P 888        888        888      888
        "Y8888P"  888        8888888888 88888888 88888888
-      --------------------------------${application.formatted-version}
+      ---------------------------------------( ${application.formatted-version} )
 
   This CLI uses https://start.spring.io to generate quickstart projects
   that can be easily customized.
