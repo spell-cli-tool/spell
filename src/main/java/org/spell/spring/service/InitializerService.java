@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -50,7 +51,7 @@ public class InitializerService {
 
   public List<SelectorItem<String>> retrieveTypes() {
     MetadataDto metadata = retrieveMetadata();
-    return retrieveSelectorItems(metadata.getType().getValues());
+    return retrieveSelectorItems(metadata.getType().getDefaultValue(), metadata.getType().getValues());
   }
 
   public String retrieveActionByTypeId(String typeId) {
@@ -64,22 +65,26 @@ public class InitializerService {
 
   public List<SelectorItem<String>> retrieveLanguages() {
     MetadataDto metadata = retrieveMetadata();
-    return retrieveSelectorItems(metadata.getLanguage().getValues());
+    return retrieveSelectorItems(metadata.getLanguage().getDefaultValue(),
+        metadata.getLanguage().getValues());
   }
 
   public List<SelectorItem<String>> retrieveSpringBootVersion() {
     MetadataDto metadata = retrieveMetadata();
-    return retrieveSelectorItems(metadata.getBootVersion().getValues());
+    return retrieveSelectorItems(metadata.getBootVersion().getDefaultValue(),
+        metadata.getBootVersion().getValues());
   }
 
   public List<SelectorItem<String>> retrievePackaging() {
     MetadataDto metadata = retrieveMetadata();
-    return retrieveSelectorItems(metadata.getPackaging().getValues());
+    return retrieveSelectorItems(metadata.getPackaging().getDefaultValue(),
+        metadata.getPackaging().getValues());
   }
 
   public List<SelectorItem<String>> retrieveJavaVersion() {
     MetadataDto metadata = retrieveMetadata();
-    return retrieveSelectorItems(metadata.getJavaVersion().getValues());
+    return retrieveSelectorItems(metadata.getJavaVersion().getDefaultValue(),
+        metadata.getJavaVersion().getValues());
   }
 
   public List<SelectorItem<String>> retrieveDependenciesWithGroups() {
@@ -214,11 +219,23 @@ public class InitializerService {
     return destFile;
   }
 
-  private <T extends MetadataValue> List<SelectorItem<String>> retrieveSelectorItems(List<T> values) {
-    return values
-        .stream()
-        .map(type -> SelectorItem.of(type.getName(), type.getId()))
-        .collect(Collectors.toList());
+  private <T extends MetadataValue> List<SelectorItem<String>> retrieveSelectorItems(
+      String defaultId, List<T> values) {
+    List<SelectorItem<String>> items = new ArrayList<>();
+    Optional<SelectorItem<String>> defaultItem = values
+      .stream()
+      .filter(value -> defaultId.equals(value.getId()))
+      .map(value -> SelectorItem.of(value.getName() + " [default]", value.getId()))
+      .findFirst();
+
+    defaultItem.ifPresent(items::add);
+
+    values
+      .stream()
+      .filter(value -> !defaultId.equals(value.getId()))
+      .forEach(value -> items.add(SelectorItem.of(value.getName(), value.getId())));
+
+    return items;
   }
 
   private void saveFile(String name, byte[] file) {
