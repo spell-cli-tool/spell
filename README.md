@@ -33,3 +33,5 @@ Spring Initializer Commands
 
     dependency: Show details of selected dependencies
     icreate: Create a Spring Boot project interactively
+
+![](https://github.com/ivvkopylov/spell/blob/master/assets/spell-demo.gif)
