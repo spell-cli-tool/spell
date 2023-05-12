@@ -53,4 +53,4 @@ All releases page: [https://github.com/ivvkopylov/spell/releases](https://github
 
 ## License
 
-This app is licensed under the MIT License. See the LICENSE file for more details.
+This app is licensed under the Apache License Version 2.0. See the LICENSE file for more details.
