@@ -9,9 +9,9 @@
        "Y8888P"  888        8888888888 88888888 88888888
       ---------------------------------------( ${application.formatted-version} )
 
-  This CLI uses https://start.spring.io to generate quickstart projects
-  that can be easily customized.
-  Possible customizations include a project's dependencies, Java version,
-  and build system or build structure.
+  This is a Spring Initializr (https://start.spring.io/) CLI tool
+  for generating quickstart projects that can be easily customized.
+  Possible customizations include a project's dependencies,
+  Java version, and build system or build structure.
 
   Type "help" for more information.

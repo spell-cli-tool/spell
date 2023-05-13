@@ -8,14 +8,14 @@
       Y88b  d88P 888        888        888      888
        "Y8888P"  888        8888888888 88888888 88888888
 
-This is a Spring Initializr (https://start.spring.io/) CLI tool for generating projects 
+This is a Spring Initializr (https://start.spring.io/) CLI tool for generating quickstart projects 
 that can be easily customized.
 Possible customizations include a project's dependencies, Java version, and build system or
 build structure.
 
 ## Main commands
 - **help**: Display help about available commands.
-- **icreate**: Create Spring Boot projects interactively. The **"icreate"** command allows you to 
+- **icreate**: Create Spring Boot projects interactively. This command allows you to 
 create new Spring Boot projects with ease. Simply run the command and follow the prompts to create a new project.
 
 ## All commands
@@ -43,9 +43,13 @@ create new Spring Boot projects with ease. Simply run the command and follow the
 ## Installation and usage
 
 Download appropriate zip archive with executable binary file for Windows, 
-MacOS, or Linux from the [latest release](https://github.com/ivvkopylov/spell/releases/tag/v0.1.1),
-unzip, and launch spell (.exe) executable file.
-Also it's possible to download zip archive with executable jar file and launch tool with command `java -jar spell-{version}.jar`.
+macOS, or Linux, unzip and launch spell executable file.
+Also it's possible to download zip archive with executable jar and launch tool with command `java -jar spell-{version}.jar`.
+
+- jar: [package-spell-jar-v0.1.1.zip](https://github.com/ivvkopylov/spell/releases/download/v0.1.1/package-spell-jar-v0.1.1.zip)
+- Windows: [package-native-windows-v0.1.1.zip](https://github.com/ivvkopylov/spell/releases/download/v0.1.1/package-native-windows-v0.1.1.zip)
+- Linux: [package-native-ubuntu-v0.1.1.zip](https://github.com/ivvkopylov/spell/releases/download/v0.1.1/package-native-ubuntu-v0.1.1.zip)
+- macOS: [package-native-macos-v0.1.1.zip](https://github.com/ivvkopylov/spell/releases/download/v0.1.1/package-native-macos-v0.1.1.zip)
 
 All releases page: [https://github.com/ivvkopylov/spell/releases](https://github.com/ivvkopylov/spell/releases)
 
@@ -54,3 +58,9 @@ All releases page: [https://github.com/ivvkopylov/spell/releases](https://github
 ## License
 
 This app is licensed under the MIT License. See the LICENSE file for more details.
+
+## Contact information
+
+If you have any questions or suggestions, please feel free to reach out to me:
+
+ - Email: spell.cli.tool@gmail.com
