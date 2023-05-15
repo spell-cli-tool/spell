@@ -1,5 +1,6 @@
 package org.spell.spring.service;
 
+import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ import org.spell.spring.client.model.MetadataValue;
 import org.spell.spring.client.model.TypeValue;
 import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +29,14 @@ public class InitializerService {
 
   private final InitializerClient client;
   private final FileManager fileManager;
-
-  private String settingsInfo;
   private MetadataDto metadata;
 
-  public String retrieveSettingsInfo() {
-    if (!StringUtils.hasText(settingsInfo)) {
-      settingsInfo = client.retrieveSettingsInfo();
+  @PostConstruct
+  public void init() {
+    try {
+      retrieveMetadata();
+    } catch (Exception e) {
     }
-    return settingsInfo;
   }
 
   public MetadataDto retrieveMetadata() {

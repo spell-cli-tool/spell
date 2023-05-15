@@ -5,6 +5,7 @@ import org.jline.utils.AttributedStyle;
 import org.spell.common.BaseShellComponent;
 import org.spell.common.ShellHelper;
 import org.spell.spring.Action;
+import org.spell.spring.RequestParam;
 import org.spell.spring.client.model.DependenciesGroup;
 import org.spell.spring.client.model.DependenciesValue;
 import org.spell.spring.client.model.Guide;
@@ -90,25 +91,25 @@ public class InitializerCommands extends BaseShellComponent {
     StringBuilder params = new StringBuilder();
     String type = selectType();
     String actionValue = service.retrieveActionByTypeId(type);
-    params.append("?type=" + type);
-    params.append("&language=" + selectLanguage());
-    params.append("&bootVersion=" + selectSpringBootVersion());
+    params.append(String.format("?%s=%s", RequestParam.TYPE.getValue(), type));
+    params.append(toParam(RequestParam.LANGUAGE.getValue(), selectLanguage()));
+    params.append(toParam(RequestParam.BOOT_VERSION.getValue(), selectSpringBootVersion()));
     String groupId = setInput("Group", "com.example",
         InitializerConstant.GROUP_PATTERN);
-    params.append("&groupId=" + groupId);
+    params.append(toParam(RequestParam.GROUP_ID.getValue(), groupId));
     String artifactId = setInput("Artifact", "demo",
         InitializerConstant.ARTIFACT_PATTERN);
-    params.append("&artifactId=" + artifactId);
+    params.append(toParam(RequestParam.ARTIFACT_ID.getValue(), artifactId));
     String name = setInput("Name", artifactId);
-    params.append("&name=" + name);
-    params.append("&baseDir=" + name);
-    params.append("&description="
-        + setInput("Description", "Demo project for Spring Boot"));
-    params.append("&packageName="
-        + setInput("Package name", groupId + "." + artifactId));
-    params.append("&packaging=" + selectPackaging());
-    params.append("&javaVersion=" + selectJavaVersion());
-    params.append("&dependencies="  + selectMultipleDependencies());
+    params.append(toParam(RequestParam.NAME.getValue(), name));
+    params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
+    params.append(toParam(RequestParam.DESCRIPTION.getValue(),
+        setInput("Description", "Demo project for Spring Boot")));
+    params.append(toParam(RequestParam.PACKAGE_NAME.getValue(),
+        setInput("Package name", groupId + "." + artifactId)));
+    params.append(toParam(RequestParam.PACKAGING.getValue(), selectPackaging()));
+    params.append(toParam(RequestParam.JAVA_VERSION.getValue(), selectJavaVersion()));
+    params.append(toParam(RequestParam.DEPENDENCIES.getValue(), selectMultipleDependencies()));
 
     Action action = Action.getFromValue(actionValue);
     String projectName = service.download(action, params.toString());
@@ -158,4 +159,7 @@ public class InitializerCommands extends BaseShellComponent {
     return selectMultipleItems("Dependencies details", items);
   }
 
+  private String toParam(String param, String value) {
+    return String.format("&%s=%s", param, value);
+  }
 }
