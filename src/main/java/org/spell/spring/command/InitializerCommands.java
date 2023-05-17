@@ -12,12 +12,19 @@ import org.spell.spring.client.model.Guide;
 import org.spell.spring.client.model.MetadataDto;
 import org.spell.spring.client.model.Reference;
 import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.options.BootVersionValueProvider;
+import org.spell.spring.options.DependencyValueProvider;
+import org.spell.spring.options.JavaVersionValueProvider;
+import org.spell.spring.options.LanguageValueProvider;
+import org.spell.spring.options.PackagingValueProvider;
+import org.spell.spring.options.TypeValueProvider;
 import org.spell.spring.service.InitializerService;
-import org.springframework.shell.context.InteractionMode;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @ShellComponent
 @ShellCommandGroup("Spring Initializer Commands")
@@ -85,8 +92,128 @@ public class InitializerCommands extends BaseShellComponent {
     }
   }
 
-  @ShellMethod(key = "icreate", value = "Create a Spring Boot project interactively.",
-      interactionMode = InteractionMode.INTERACTIVE)
+  @ShellMethod(key = "create", value = "Create a Spring Boot project with params.")
+  public void create(
+      @ShellOption(
+          value = {"-t", "--type"},
+          valueProvider = TypeValueProvider.class,
+          help = "Project type: Gradle or Maven",
+          defaultValue = "") String type,
+      @ShellOption(
+          value = {"-l", "--language"},
+          valueProvider = LanguageValueProvider.class,
+          help = "Programming language: Java, Kotlin, Groovy",
+          defaultValue = "") String language,
+      @ShellOption(
+          value = {"-b", "--boot-version"},
+          valueProvider = BootVersionValueProvider.class,
+          help = "Spring Boot version",
+          defaultValue = "") String bootVersion,
+      @ShellOption(
+          value = {"-g", "--group-id"},
+          help = "Project metadata: group id (for example: com.example)",
+          defaultValue = "") String groupId,
+      @ShellOption(
+          value = {"-a", "--artifact-id"},
+          help = "Project metadata: artifact id (for example: demo)",
+          defaultValue = "") String artifactId,
+      @ShellOption(
+          value = {"-n", "--name"},
+          help = "Project metadata: name. Project folder name (for example: demo)",
+          defaultValue = "") String name,
+      @ShellOption(
+          value = {"--description"},
+          help = "Project metadata: description (for example: Demo project for Spring Boot)",
+          defaultValue = "") String description,
+      @ShellOption(
+          value = {"--package-name"},
+          help = "Project metadata: packageName (for example: com.example.demo)",
+          defaultValue = "") String packageName,
+      @ShellOption(
+          value = {"-p", "--packaging"},
+          valueProvider = PackagingValueProvider.class,
+          help = "Project metadata: packaging: Jar or War",
+          defaultValue = "") String packaging,
+      @ShellOption(
+          value = {"-j", "--java-version"},
+          valueProvider = JavaVersionValueProvider.class,
+          help = "Project metadata: javaVersion",
+          defaultValue = "") String javaVersion,
+      @ShellOption(
+          value = {"-d", "--dependencies"},
+          valueProvider = DependencyValueProvider.class,
+          help = "Spring project dependencies",
+          defaultValue = "") String dependencies) {
+    StringBuilder params = new StringBuilder();
+
+    if (!StringUtils.hasText(type)) {
+      type = service.defaultType();
+    }
+    String actionValue = service.retrieveActionByTypeId(type);
+    params.append(String.format("?%s=%s", RequestParam.TYPE.getValue(), type));
+
+    if (!StringUtils.hasText(language)) {
+      language = service.defaultLanguage();
+    }
+    params.append(toParam(RequestParam.LANGUAGE.getValue(), language));
+
+    if (!StringUtils.hasText(bootVersion)) {
+      bootVersion = service.defaultBootVersion();
+    }
+    params.append(toParam(RequestParam.BOOT_VERSION.getValue(), bootVersion));
+
+    if (!StringUtils.hasText(groupId)) {
+      groupId = service.defaultGroupId();
+    }
+    params.append(toParam(RequestParam.GROUP_ID.getValue(), groupId));
+
+    if (!StringUtils.hasText(artifactId)) {
+      artifactId = service.defaultArtifactId();
+    }
+    params.append(toParam(RequestParam.ARTIFACT_ID.getValue(), artifactId));
+
+    if (!StringUtils.hasText(name)) {
+      name = artifactId;
+    }
+    params.append(toParam(RequestParam.NAME.getValue(), name));
+    params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
+
+    if (!StringUtils.hasText(description)) {
+      description = service.defaultDescription();
+    }
+    params.append(toParam(RequestParam.DESCRIPTION.getValue(), description));
+
+    if (!StringUtils.hasText(packageName)) {
+      packageName = groupId + "." + artifactId;
+    }
+    params.append(toParam(RequestParam.PACKAGE_NAME.getValue(), packageName));
+
+    if (!StringUtils.hasText(packaging)) {
+      packaging = service.defaultPackaging();
+    }
+    params.append(toParam(RequestParam.PACKAGING.getValue(), packaging));
+
+    if (!StringUtils.hasText(javaVersion)) {
+      javaVersion = service.defaultJavaVersion();
+    }
+    params.append(toParam(RequestParam.JAVA_VERSION.getValue(), javaVersion));
+
+    params.append(toParam(RequestParam.DEPENDENCIES.getValue(), dependencies));
+
+    Action action = Action.getFromValue(actionValue);
+    String projectName = service.download(action, params.toString());
+
+    String resultType = "project";
+    switch (action) {
+      case STARTER_ZIP -> resultType = "project";
+      case BUILD_GRADLE -> resultType = "gradle file";
+      case POM_XML -> resultType = "pom file";
+    }
+    shellHelper.print(String.format("The %s '%s' is successfully created!", resultType, projectName),
+        AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
+  }
+
+  @ShellMethod(key = "icreate", value = "Create a Spring Boot project interactively.")
   public void interactiveCreate() {
     StringBuilder params = new StringBuilder();
     String type = selectType();

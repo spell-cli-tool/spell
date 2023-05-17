@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.RequiredArgsConstructor;
@@ -47,9 +48,79 @@ public class InitializerService {
     return metadata;
   }
 
+  public String defaultType() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getType().getDefaultValue();
+  }
+
+  public String defaultLanguage() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getLanguage().getDefaultValue();
+  }
+
+  public String defaultBootVersion() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getBootVersion().getDefaultValue();
+  }
+
+  public String defaultGroupId() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getGroupId().getDefaultValue();
+  }
+
+  public String defaultArtifactId() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getArtifactId().getDefaultValue();
+  }
+
+  public String defaultDescription() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getDescription().getDefaultValue();
+  }
+
+  public String defaultPackaging() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getPackaging().getDefaultValue();
+  }
+
+  public String defaultJavaVersion() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getJavaVersion().getDefaultValue();
+  }
+
   public List<SelectorItem<String>> retrieveTypes() {
     MetadataDto metadata = retrieveMetadata();
     return retrieveSelectorItems(metadata.getType().getDefaultValue(), metadata.getType().getValues());
+  }
+
+  public List<String> retrieveTypeIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getType().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrieveLanguageIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getLanguage().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrieveBootVersionIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getBootVersion().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrievePackagingIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getPackaging().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrieveJavaVersionIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getJavaVersion().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
   }
 
   public String retrieveActionByTypeId(String typeId) {
