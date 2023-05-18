@@ -13,7 +13,9 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.RequiredArgsConstructor;
+import org.jline.utils.AttributedStyle;
 import org.spell.common.FileManager;
+import org.spell.common.ShellHelper;
 import org.spell.spring.Action;
 import org.spell.spring.client.InitializerClient;
 import org.spell.spring.client.model.DependenciesGroup;
@@ -30,6 +32,7 @@ public class InitializerService {
 
   private final InitializerClient client;
   private final FileManager fileManager;
+  private final ShellHelper shellHelper;
   private MetadataDto metadata;
 
   @PostConstruct
@@ -161,10 +164,15 @@ public class InitializerService {
     MetadataDto metadata = retrieveMetadata();
 
     for (DependenciesGroup group : metadata.getDependencies().getValues()) {
-      result.add(SelectorItem.of(String.format("<======%s======>", group.getName()),
+      result.add(SelectorItem.of(
+          shellHelper.getStyledMessage(String.format("########## %s ##########", group.getName()),
+              AttributedStyle.DEFAULT.foreground(AttributedStyle.BRIGHT).bold()),
           group.getId(), false, false));
       for (DependenciesValue value : group.getValues()) {
-        result.add(SelectorItem.of(value.getName(), value.getId()));
+        result.add(SelectorItem.of(
+            String.format("%s - %s", shellHelper.getStyledMessage(value.getName(),
+                    AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN)),
+                value.getDescription()), value.getId()));
       }
     }
     return result;
@@ -311,8 +319,6 @@ public class InitializerService {
     File outputFile = new File(name);
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
       outputStream.write(file);
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
