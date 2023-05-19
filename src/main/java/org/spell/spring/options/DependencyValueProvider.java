@@ -19,7 +19,7 @@ public class DependencyValueProvider implements ValueProvider {
 
   @Override
   public List<CompletionProposal> complete(CompletionContext completionContext) {
-    List<String> ids = service.retrieveDependenciesId();
+    List<String> ids = service.retrieveDependencyIds();
     String currentValue = completionContext.currentWord();
     if (StringUtils.hasText(currentValue) && currentValue.contains(",")) {
       int index = currentValue.lastIndexOf(",");

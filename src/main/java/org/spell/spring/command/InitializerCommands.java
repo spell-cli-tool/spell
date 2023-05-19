@@ -198,6 +198,10 @@ public class InitializerCommands extends BaseShellComponent {
     }
     params.append(toParam(RequestParam.JAVA_VERSION.getValue(), javaVersion));
 
+    if (StringUtils.hasText(dependencies)) {
+      dependencies = cleanDependencies(dependencies);
+      service.validateDependencies(dependencies.split(","));
+    }
     params.append(toParam(RequestParam.DEPENDENCIES.getValue(), dependencies));
 
     Action action = Action.getFromValue(actionValue);
@@ -288,5 +292,14 @@ public class InitializerCommands extends BaseShellComponent {
 
   private String toParam(String param, String value) {
     return String.format("&%s=%s", param, value);
+  }
+
+  private String cleanDependencies(String dependencies) {
+    dependencies = dependencies.replace(" ", "");
+    int index = dependencies.lastIndexOf(",");
+    if (index == dependencies.length() - 1) {
+      dependencies = dependencies.substring(0, dependencies.length() - 1);
+    }
+    return dependencies;
   }
 }
