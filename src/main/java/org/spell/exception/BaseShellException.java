@@ -1,6 +1,5 @@
 package org.spell.exception;
 
-import lombok.Getter;
 import org.springframework.boot.ExitCodeGenerator;
 
 public abstract class BaseShellException extends RuntimeException implements ExitCodeGenerator {

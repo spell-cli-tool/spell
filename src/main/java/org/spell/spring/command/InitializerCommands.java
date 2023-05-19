@@ -19,7 +19,15 @@ import org.spell.spring.options.LanguageValueProvider;
 import org.spell.spring.options.PackagingValueProvider;
 import org.spell.spring.options.TypeValueProvider;
 import org.spell.spring.service.InitializerService;
+import org.spell.spring.validation.annotation.ValidArtifact;
+import org.spell.spring.validation.annotation.ValidBootVersion;
 import org.spell.spring.validation.annotation.ValidDependencies;
+import org.spell.spring.validation.annotation.ValidGroup;
+import org.spell.spring.validation.annotation.ValidJavaVersion;
+import org.spell.spring.validation.annotation.ValidLanguage;
+import org.spell.spring.validation.annotation.ValidName;
+import org.spell.spring.validation.annotation.ValidPackaging;
+import org.spell.spring.validation.annotation.ValidType;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -95,54 +103,54 @@ public class InitializerCommands extends BaseShellComponent {
 
   @ShellMethod(key = "create", value = "Create a Spring Boot project with params.")
   public void create(
+      @ValidType
       @ShellOption(
-          value = {"-t", "--type"},
+          value = {InitializerConstant.SHORT_TYPE_PARAM, InitializerConstant.TYPE_PARAM},
           valueProvider = TypeValueProvider.class,
           help = "Project type: Gradle or Maven",
           defaultValue = "") String type,
+      @ValidLanguage
       @ShellOption(
-          value = {"-l", "--language"},
+          value = {InitializerConstant.SHORT_LANGUAGE_PARAM, InitializerConstant.LANGUAGE_PARAM},
           valueProvider = LanguageValueProvider.class,
           help = "Programming language: Java, Kotlin, Groovy",
           defaultValue = "") String language,
+      @ValidBootVersion
       @ShellOption(
-          value = {"-b", "--boot-version"},
+          value = {InitializerConstant.SHORT_BOOT_VERSION_PARAM, InitializerConstant.BOOT_VERSION_PARAM},
           valueProvider = BootVersionValueProvider.class,
           help = "Spring Boot version",
           defaultValue = "") String bootVersion,
+      @ValidGroup
       @ShellOption(
-          value = {"-g", "--group-id"},
+          value = {InitializerConstant.SHORT_GROUP_PARAM, InitializerConstant.GROUP_PARAM},
           help = "Project metadata: group id (for example: com.example)",
           defaultValue = "") String groupId,
+      @ValidArtifact
       @ShellOption(
-          value = {"-a", "--artifact-id"},
+          value = {InitializerConstant.SHORT_ARTIFACT_PARAM, InitializerConstant.ARTIFACT_PARAM},
           help = "Project metadata: artifact id (for example: demo)",
           defaultValue = "") String artifactId,
+      @ValidName
       @ShellOption(
-          value = {"-n", "--name"},
+          value = {InitializerConstant.SHORT_NAME_PARAM, InitializerConstant.NAME_PARAM},
           help = "Project metadata: name. Project folder name (for example: demo)",
           defaultValue = "") String name,
+      @ValidPackaging
       @ShellOption(
-          value = {"--description"},
-          help = "Project metadata: description (for example: Demo project for Spring Boot)",
-          defaultValue = "") String description,
-      @ShellOption(
-          value = {"--package-name"},
-          help = "Project metadata: packageName (for example: com.example.demo)",
-          defaultValue = "") String packageName,
-      @ShellOption(
-          value = {"-p", "--packaging"},
+          value = {InitializerConstant.SHORT_PACKAGING_PARAM, InitializerConstant.PACKAGING_PARAM},
           valueProvider = PackagingValueProvider.class,
           help = "Project metadata: packaging: Jar or War",
           defaultValue = "") String packaging,
+      @ValidJavaVersion
       @ShellOption(
-          value = {"-j", "--java-version"},
+          value = {InitializerConstant.SHORT_JAVA_VERSION_PARAM, InitializerConstant.JAVA_VERSION_PARAM},
           valueProvider = JavaVersionValueProvider.class,
           help = "Project metadata: javaVersion",
           defaultValue = "") String javaVersion,
       @ValidDependencies
       @ShellOption(
-          value = {"-d", "--dependencies"},
+          value = {InitializerConstant.SHORT_DEPENDENCIES_PARAM, InitializerConstant.DEPENDENCIES_PARAM},
           valueProvider = DependencyValueProvider.class,
           help = "Spring project dependencies",
           defaultValue = "") String dependencies) {
@@ -180,14 +188,7 @@ public class InitializerCommands extends BaseShellComponent {
     params.append(toParam(RequestParam.NAME.getValue(), name));
     params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
 
-    if (!StringUtils.hasText(description)) {
-      description = service.defaultDescription();
-    }
-    params.append(toParam(RequestParam.DESCRIPTION.getValue(), description));
-
-    if (!StringUtils.hasText(packageName)) {
-      packageName = groupId + "." + artifactId;
-    }
+    String packageName = groupId + "." + artifactId;
     params.append(toParam(RequestParam.PACKAGE_NAME.getValue(), packageName));
 
     if (!StringUtils.hasText(packaging)) {

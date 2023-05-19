@@ -46,7 +46,7 @@ public class DependenciesValidator extends AbstractConstraintValidator<ValidDepe
   }
 
   public String findWrongDependencies(String[] dependenciesForValidation) {
-    var dependencies = service. retrieveDependencyIds();
+    var dependencies = service.retrieveDependencyIds();
     List<String> wrongDependencies = new ArrayList<>();
 
     for (var dependency : dependenciesForValidation) {

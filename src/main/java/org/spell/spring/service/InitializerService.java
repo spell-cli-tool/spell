@@ -1,6 +1,5 @@
 package org.spell.spring.service;
 
-import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,14 +32,6 @@ public class InitializerService {
   private final FileManager fileManager;
   private final ShellHelper shellHelper;
   private MetadataDto metadata;
-
-  @PostConstruct
-  public void init() {
-    try {
-      retrieveMetadata();
-    } catch (Exception e) {
-    }
-  }
 
   public MetadataDto retrieveMetadata() {
     if (metadata == null) {
