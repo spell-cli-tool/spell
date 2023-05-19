@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.jline.utils.AttributedStyle;
 import org.spell.common.FileManager;
 import org.spell.common.ShellHelper;
-import org.spell.exception.OptionException;
 import org.spell.spring.Action;
 import org.spell.spring.client.InitializerClient;
 import org.spell.spring.client.model.DependenciesGroup;
@@ -25,7 +24,6 @@ import org.spell.spring.client.model.MetadataValue;
 import org.spell.spring.client.model.TypeValue;
 import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -50,22 +48,6 @@ public class InitializerService {
     }
 
     return metadata;
-  }
-
-  public void validateDependencies(String[] dependenciesForCheck) {
-    var dependencies = retrieveDependencyIds();
-    List<String> wrongDependencies = new ArrayList<>();
-
-    for (var dependency : dependenciesForCheck) {
-      if (!dependencies.contains(dependency)) {
-        wrongDependencies.add(dependency);
-      }
-    }
-
-    if (!CollectionUtils.isEmpty(wrongDependencies)) {
-      throw new OptionException(String.format("Wrong dependencies: %s",
-          String.join( ", ", wrongDependencies)));
-    }
   }
 
   public String defaultType() {

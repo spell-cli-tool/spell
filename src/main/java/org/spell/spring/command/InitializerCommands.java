@@ -19,6 +19,7 @@ import org.spell.spring.options.LanguageValueProvider;
 import org.spell.spring.options.PackagingValueProvider;
 import org.spell.spring.options.TypeValueProvider;
 import org.spell.spring.service.InitializerService;
+import org.spell.spring.validation.annotation.ValidDependencies;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -139,6 +140,7 @@ public class InitializerCommands extends BaseShellComponent {
           valueProvider = JavaVersionValueProvider.class,
           help = "Project metadata: javaVersion",
           defaultValue = "") String javaVersion,
+      @ValidDependencies
       @ShellOption(
           value = {"-d", "--dependencies"},
           valueProvider = DependencyValueProvider.class,
@@ -198,10 +200,6 @@ public class InitializerCommands extends BaseShellComponent {
     }
     params.append(toParam(RequestParam.JAVA_VERSION.getValue(), javaVersion));
 
-    if (StringUtils.hasText(dependencies)) {
-      dependencies = cleanDependencies(dependencies);
-      service.validateDependencies(dependencies.split(","));
-    }
     params.append(toParam(RequestParam.DEPENDENCIES.getValue(), dependencies));
 
     Action action = Action.getFromValue(actionValue);
@@ -292,14 +290,5 @@ public class InitializerCommands extends BaseShellComponent {
 
   private String toParam(String param, String value) {
     return String.format("&%s=%s", param, value);
-  }
-
-  private String cleanDependencies(String dependencies) {
-    dependencies = dependencies.replace(" ", "");
-    int index = dependencies.lastIndexOf(",");
-    if (index == dependencies.length() - 1) {
-      dependencies = dependencies.substring(0, dependencies.length() - 1);
-    }
-    return dependencies;
   }
 }
