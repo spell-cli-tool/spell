@@ -3,6 +3,7 @@ package org.spell.spring.command;
 import java.util.List;
 import org.jline.utils.AttributedStyle;
 import org.spell.common.BaseShellComponent;
+import org.spell.common.FileManager;
 import org.spell.common.ShellHelper;
 import org.spell.spring.Action;
 import org.spell.spring.RequestParam;
@@ -41,8 +42,10 @@ public class InitializerCommands extends BaseShellComponent {
 
   private final InitializerService service;
 
-  public InitializerCommands(InitializerService service, ShellHelper shellHelper) {
-    super(shellHelper);
+  public InitializerCommands(InitializerService service,
+      ShellHelper shellHelper,
+      FileManager fileManager) {
+    super(shellHelper, fileManager);
     this.service = service;
   }
 
@@ -230,7 +233,7 @@ public class InitializerCommands extends BaseShellComponent {
     String artifactId = setInput("Artifact", "demo",
         InitializerConstant.ARTIFACT_PATTERN);
     params.append(toParam(RequestParam.ARTIFACT_ID.getValue(), artifactId));
-    String name = setInput("Name", artifactId);
+    String name = setFolder("Name", artifactId);
     params.append(toParam(RequestParam.NAME.getValue(), name));
     params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
     params.append(toParam(RequestParam.DESCRIPTION.getValue(),
