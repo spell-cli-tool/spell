@@ -215,6 +215,18 @@ public class InitializerCommands extends BaseShellComponent {
       case BUILD_GRADLE -> resultType = "gradle file";
       case POM_XML -> resultType = "pom file";
     }
+
+    printCreateResultInfo("Project", type);
+    printCreateResultInfo("Language", language);
+    printCreateResultInfo("Spring Boot", bootVersion);
+    printCreateResultInfo("Group", groupId);
+    printCreateResultInfo("Artifact", artifactId);
+    printCreateResultInfo("Name", name);
+    printCreateResultInfo("Package name", packageName);
+    printCreateResultInfo("Packaging", packaging);
+    printCreateResultInfo("Java", javaVersion);
+    printCreateResultInfo("Dependencies", dependencies);
+
     shellHelper.print(String.format("The %s '%s' is successfully created!", resultType, projectName),
         AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
   }
@@ -294,5 +306,15 @@ public class InitializerCommands extends BaseShellComponent {
 
   private String toParam(String param, String value) {
     return String.format("&%s=%s", param, value);
+  }
+
+  private void printCreateResultInfo(String param, String value) {
+    shellHelper.print(
+        String.format("%s %s %s",
+            shellHelper.getStyledMessage("?",
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold()),
+            shellHelper.getStyledMessage(param, AttributedStyle.DEFAULT.bold()),
+            shellHelper.getStyledMessage(value,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE))));
   }
 }

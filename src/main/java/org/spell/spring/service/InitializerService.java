@@ -161,7 +161,7 @@ public class InitializerService {
       for (DependenciesValue value : group.getValues()) {
         result.add(SelectorItem.of(
             String.format("%s - %s", shellHelper.getStyledMessage(value.getName(),
-                    AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN)),
+                    AttributedStyle.DEFAULT.bold()),
                 value.getDescription()), value.getId()));
       }
     }

@@ -87,7 +87,7 @@ public class FileManager {
       for (File file : files) {
         if (file.isDirectory() && file.getName().equals(name)
             && file.listFiles() != null && file.listFiles().length > 0) {
-          name = findUniqueDirectoryName(name, files, "__%s");
+          name = findUniqueDirectoryName(name, files, "_%s");
           break;
         }
       }
