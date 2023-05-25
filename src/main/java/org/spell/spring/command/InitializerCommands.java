@@ -248,8 +248,6 @@ public class InitializerCommands extends BaseShellComponent {
     String name = setFolder("Name", artifactId);
     params.append(toParam(RequestParam.NAME.getValue(), name));
     params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
-    params.append(toParam(RequestParam.DESCRIPTION.getValue(),
-        setInput("Description", "Demo project for Spring Boot")));
     params.append(toParam(RequestParam.PACKAGE_NAME.getValue(),
         setInput("Package name", groupId + "." + artifactId)));
     params.append(toParam(RequestParam.PACKAGING.getValue(), selectPackaging()));
