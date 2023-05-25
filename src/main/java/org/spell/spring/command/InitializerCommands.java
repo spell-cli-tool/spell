@@ -104,7 +104,7 @@ public class InitializerCommands extends BaseShellComponent {
     }
   }
 
-  @ShellMethod(key = "create", value = "Create a Spring Boot project with params.")
+  @ShellMethod(key = "create", value = "Create a Spring Boot project non-interactively with params.")
   public void create(
       @ValidType
       @ShellOption(
