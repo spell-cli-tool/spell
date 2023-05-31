@@ -174,7 +174,8 @@ public class InitializerService {
 
     for (DependenciesGroup group : metadata.getDependencies().getValues()) {
       for (DependenciesValue value : group.getValues()) {
-        result.add(SelectorItem.of(value.getName(), value.getId()));
+        result.add(SelectorItem.of(String.format("%s [%s]", value.getName(), value.getId()),
+            value.getId()));
       }
     }
     return result;

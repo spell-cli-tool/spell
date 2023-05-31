@@ -33,6 +33,11 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.table.ArrayTableModel;
+import org.springframework.shell.table.BorderStyle;
+import org.springframework.shell.table.CellMatchers;
+import org.springframework.shell.table.TableBuilder;
+import org.springframework.shell.table.TableModel;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -102,6 +107,37 @@ public class InitializerCommands extends BaseShellComponent {
         }
       }
     }
+  }
+
+
+  @ShellMethod(key = "param", value = "Show possible values or examples for params of the 'create' command.")
+  public void retrieveParamsValues() {
+
+    Object[][] sampleData = new Object[][] {
+        {"Param", "Values"},
+        {String.format("%s, %s", InitializerConstant.SHORT_TYPE_PARAM, InitializerConstant.TYPE_PARAM),
+          String.join(", ", service.retrieveTypeIds())},
+        {String.format("%s, %s", InitializerConstant.SHORT_LANGUAGE_PARAM, InitializerConstant.LANGUAGE_PARAM),
+            String.join(", ", service.retrieveLanguageIds())},
+        {String.format("%s, %s", InitializerConstant.SHORT_BOOT_VERSION_PARAM, InitializerConstant.BOOT_VERSION_PARAM),
+            String.join(", ", service.retrieveBootVersionIds())},
+        {String.format("%s, %s", InitializerConstant.SHORT_GROUP_PARAM, InitializerConstant.GROUP_PARAM),
+            service.defaultGroupId()},
+        {String.format("%s, %s", InitializerConstant.SHORT_ARTIFACT_PARAM, InitializerConstant.ARTIFACT_PARAM),
+            service.defaultArtifactId()},
+        {String.format("%s, %s", InitializerConstant.SHORT_NAME_PARAM, InitializerConstant.NAME_PARAM),
+            service.defaultArtifactId()},
+        {String.format("%s, %s", InitializerConstant.SHORT_PACKAGING_PARAM, InitializerConstant.PACKAGING_PARAM),
+            String.join(", ", service.retrievePackagingIds())},
+        {String.format("%s, %s", InitializerConstant.SHORT_JAVA_VERSION_PARAM, InitializerConstant.JAVA_VERSION_PARAM),
+            String.join(", ", service.retrieveJavaVersionIds())},
+        {String.format("%s, %s", InitializerConstant.SHORT_DEPENDENCIES_PARAM, InitializerConstant.DEPENDENCIES_PARAM),
+            String.join(", ", service.retrieveDependencyIds())},
+    };
+    TableModel model = new ArrayTableModel(sampleData);
+    TableBuilder tableBuilder = new TableBuilder(model);
+    tableBuilder.addFullBorder(BorderStyle.fancy_light);
+    shellHelper.print(tableBuilder.build().render(30));
   }
 
   @ShellMethod(key = "create", value = "Create a Spring Boot project non-interactively with params.")
