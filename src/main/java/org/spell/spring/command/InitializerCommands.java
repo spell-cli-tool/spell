@@ -110,9 +110,8 @@ public class InitializerCommands extends BaseShellComponent {
   }
 
 
-  @ShellMethod(key = "param", value = "Show possible values or examples for params of the 'create' command.")
+  @ShellMethod(key = "param", value = "Show values (examples) for params of the 'create' command.")
   public void retrieveParamsValues() {
-
     Object[][] sampleData = new Object[][] {
         {"Param", "Values"},
         {String.format("%s, %s", InitializerConstant.SHORT_TYPE_PARAM, InitializerConstant.TYPE_PARAM),

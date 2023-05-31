@@ -1,5 +1,6 @@
 package org.spell.spring.service;
 
+import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -7,10 +8,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.jline.utils.AttributedStyle;
 import org.spell.common.FileManager;
 import org.spell.common.ShellHelper;
@@ -31,11 +34,19 @@ public class InitializerService {
   private final InitializerClient client;
   private final FileManager fileManager;
   private final ShellHelper shellHelper;
+
+  private CompletableFuture<MetadataDto> futureMetadata;
   private MetadataDto metadata;
 
+  @PostConstruct
+  public void init() {
+    futureMetadata = CompletableFuture.supplyAsync(client::retrieveMetadata);
+  }
+
+  @SneakyThrows
   public MetadataDto retrieveMetadata() {
     if (metadata == null) {
-      metadata = client.retrieveMetadata();
+      metadata = futureMetadata.get();
     }
 
     return metadata;
