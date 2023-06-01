@@ -1,18 +1,22 @@
 package org.spell.spring.service;
 
+import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.jline.utils.AttributedStyle;
 import org.spell.common.FileManager;
+import org.spell.common.ShellHelper;
 import org.spell.spring.Action;
 import org.spell.spring.client.InitializerClient;
 import org.spell.spring.client.model.DependenciesGroup;
@@ -22,7 +26,6 @@ import org.spell.spring.client.model.MetadataValue;
 import org.spell.spring.client.model.TypeValue;
 import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -30,28 +33,98 @@ public class InitializerService {
 
   private final InitializerClient client;
   private final FileManager fileManager;
+  private final ShellHelper shellHelper;
 
-  private String settingsInfo;
+  private CompletableFuture<MetadataDto> futureMetadata;
   private MetadataDto metadata;
 
-  public String retrieveSettingsInfo() {
-    if (!StringUtils.hasText(settingsInfo)) {
-      settingsInfo = client.retrieveSettingsInfo();
-    }
-    return settingsInfo;
+  @PostConstruct
+  public void init() {
+    futureMetadata = CompletableFuture.supplyAsync(client::retrieveMetadata);
   }
 
+  @SneakyThrows
   public MetadataDto retrieveMetadata() {
     if (metadata == null) {
-      metadata = client.retrieveMetadata();
+      metadata = futureMetadata.get();
     }
 
     return metadata;
   }
 
+  public String defaultType() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getType().getDefaultValue();
+  }
+
+  public String defaultLanguage() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getLanguage().getDefaultValue();
+  }
+
+  public String defaultBootVersion() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getBootVersion().getDefaultValue();
+  }
+
+  public String defaultGroupId() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getGroupId().getDefaultValue();
+  }
+
+  public String defaultArtifactId() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getArtifactId().getDefaultValue();
+  }
+
+  public String defaultDescription() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getDescription().getDefaultValue();
+  }
+
+  public String defaultPackaging() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getPackaging().getDefaultValue();
+  }
+
+  public String defaultJavaVersion() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getJavaVersion().getDefaultValue();
+  }
+
   public List<SelectorItem<String>> retrieveTypes() {
     MetadataDto metadata = retrieveMetadata();
     return retrieveSelectorItems(metadata.getType().getDefaultValue(), metadata.getType().getValues());
+  }
+
+  public List<String> retrieveTypeIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getType().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrieveLanguageIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getLanguage().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrieveBootVersionIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getBootVersion().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrievePackagingIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getPackaging().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
+  }
+
+  public List<String> retrieveJavaVersionIds() {
+    MetadataDto metadata = retrieveMetadata();
+    return metadata.getJavaVersion().getValues()
+        .stream().map(MetadataValue::getId).collect(Collectors.toList());
   }
 
   public String retrieveActionByTypeId(String typeId) {
@@ -92,10 +165,15 @@ public class InitializerService {
     MetadataDto metadata = retrieveMetadata();
 
     for (DependenciesGroup group : metadata.getDependencies().getValues()) {
-      result.add(SelectorItem.of(String.format("<======%s======>", group.getName()),
+      result.add(SelectorItem.of(
+          shellHelper.getStyledMessage(String.format("########## %s ##########", group.getName()),
+              AttributedStyle.DEFAULT.foreground(AttributedStyle.BRIGHT).bold()),
           group.getId(), false, false));
       for (DependenciesValue value : group.getValues()) {
-        result.add(SelectorItem.of(value.getName(), value.getId()));
+        result.add(SelectorItem.of(
+            String.format("%s - %s", shellHelper.getStyledMessage(value.getName(),
+                    AttributedStyle.DEFAULT.bold()),
+                value.getDescription()), value.getId()));
       }
     }
     return result;
@@ -107,13 +185,14 @@ public class InitializerService {
 
     for (DependenciesGroup group : metadata.getDependencies().getValues()) {
       for (DependenciesValue value : group.getValues()) {
-        result.add(SelectorItem.of(value.getName(), value.getId()));
+        result.add(SelectorItem.of(String.format("%s [%s]", value.getName(), value.getId()),
+            value.getId()));
       }
     }
     return result;
   }
 
-  public List<String> retrieveDependenciesId() {
+  public List<String> retrieveDependencyIds() {
     var result = new ArrayList<String>();
     MetadataDto metadata = retrieveMetadata();
     for (DependenciesGroup group : metadata.getDependencies().getValues()) {
@@ -242,8 +321,6 @@ public class InitializerService {
     File outputFile = new File(name);
     try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
       outputStream.write(file);
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

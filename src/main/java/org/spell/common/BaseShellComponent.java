@@ -16,9 +16,11 @@ import org.springframework.shell.standard.AbstractShellComponent;
 public abstract class BaseShellComponent extends AbstractShellComponent {
 
   protected final ShellHelper shellHelper;
+  protected final FileManager fileManager;
 
-  public BaseShellComponent(ShellHelper shellHelper) {
+  public BaseShellComponent(ShellHelper shellHelper, FileManager fileManager) {
     this.shellHelper = shellHelper;
+    this.fileManager = fileManager;
   }
 
   protected String selectSingleItem(String name, List<SelectorItem<String>> items) {
@@ -33,6 +35,29 @@ public abstract class BaseShellComponent extends AbstractShellComponent {
 
   protected String setInput(String name, String defaultValue) {
     return setInput(name, defaultValue, null);
+  }
+
+  protected String setFolder(String name, String defaultValue) {
+    String result = "";
+    boolean repeat;
+    do {
+      repeat = false;
+      StringInput component = new StringInput(getTerminal(), name, defaultValue);
+      component.setResourceLoader(getResourceLoader());
+      component.setTemplateExecutor(getTemplateExecutor());
+      StringInputContext context = component.run(StringInputContext.empty());
+
+      result = context.getResultValue();
+
+      if (fileManager.isDirectoryExistAndNotEmpty(result)) {
+        shellHelper.printWarning(String.format("The not empty '%s' folder already exists. "
+            + "Type another name.", result));
+        repeat = true;
+      }
+
+    } while (repeat);
+
+    return result;
   }
 
   protected String setInput(String name, String defaultValue, Pattern pattern) {

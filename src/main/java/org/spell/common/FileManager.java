@@ -51,22 +51,18 @@ public class FileManager {
     return false;
   }
 
-  public boolean isDirectoryHasName(@NotBlank(message = "path can't be blank") String path,
-    @NotBlank(message = "name can't be blank") String name) {
-    int index = path.lastIndexOf("/");
-
-    if (index >= 0 && index == path.length() - 1) {
-      path = path.substring(0, path.length() - 1);
-      index = path.lastIndexOf("/");
-    }
-
-    if (index < 0) {
+  public boolean isDirectoryExistAndNotEmpty(String name) {
+    if (isUniqueName(name, true)) {
       return false;
     }
 
-    String directoryName = path.substring(index + 1);
+    int index = currentDirectoryPath.lastIndexOf("/");
+    boolean shouldAddSlash = true;
+    if (index >= 0 && index == currentDirectoryPath.length() - 1) {
+      shouldAddSlash = false;
+    }
 
-    return directoryName.equals(name);
+    return !isDirectoryEmpty(currentDirectoryPath + (shouldAddSlash ? "/" : "") + name);
   }
 
   public boolean isUniqueName(String name, boolean forDirectory) {
@@ -91,7 +87,7 @@ public class FileManager {
       for (File file : files) {
         if (file.isDirectory() && file.getName().equals(name)
             && file.listFiles() != null && file.listFiles().length > 0) {
-          name = findUniqueDirectoryName(name, files, "__%s");
+          name = findUniqueDirectoryName(name, files, "_%s");
           break;
         }
       }
