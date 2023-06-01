@@ -17,13 +17,16 @@ build structure.
 - **help**: Display help about available commands.
 - **icreate**: Create Spring Boot projects interactively. This command allows you to 
 create new Spring Boot projects with ease. Simply run the command and follow the prompts to create a new project.
+- **create**: Create a Spring Boot project non-interactively with params. See also 'dependency' and 'param' commands.
 
 ## All commands
 
 ### Spring Initializer commands:
 
 - **icreate**: Create Spring Boot projects interactively
+- **create**: Create a Spring Boot project non-interactively with params
 - **dependency**: Show details about Spring dependencies
+- **param**: Show values (examples) for params of the 'create' command
 
 ### Basic OS commands
 
@@ -38,7 +41,6 @@ create new Spring Boot projects with ease. Simply run the command and follow the
 -   **quit, exit**: Exit the shell
 -   **history**: Display or save the history of previously run commands
 -   **version**: Show version info
--   **script**: Read and execute commands from a file
 
 ## Installation and usage
 
@@ -53,7 +55,41 @@ Also it's possible to download zip archive with executable jar and launch tool w
 
 All releases page: [https://github.com/ivvkopylov/spell/releases](https://github.com/ivvkopylov/spell/releases)
 
+### 'icreate' command
+
 ![](https://github.com/ivvkopylov/spell/blob/master/assets/spell-demo.gif)
+
+### 'create' command
+
+```
+create -t gradle-project -l java -g org.example -a demo -j 17 -d devtools,lombok,web 
+```
+
+### 'param' command
+
+**'param'** command shows possible values of parameters for command 'create'.
+```
+!!! Values may change over time !!!
+```
+**Table 1** (values for the first of June 2023)
+
+| Param               | Possible values / Examples                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -t, --type          | gradle-project, gradle-project-kotlin, gradle-build, maven-project, maven-build                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -l, --language      | java, kotlin, groovy                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -b, --boot-version  | 3.1.1.BUILD-SNAPSHOT, 3.1.0.RELEASE, 3.0.8.BUILD-SNAPSHOT, 3.0.7.RELEASE, 2.7.13.BUILD-SNAPSHOT, 2.7.12.RELEASE                                                                                                                                                                                                                                                                                                                                                                          |
+| -g, --group-id      | com.example                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| -a, --artifact-id   | demo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -n, --name          | demo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -p, --packaging     | jar, war                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -j, --java-version  | 20, 17, 11, 1.8                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -d, --dependencies  | native, devtools, lombok, configuration-processor, docker-compose, web, webflux, graphql, data-rest, session, data-rest-explorer, hateoas, web-services, jersey, vaadin, thymeleaf, freemarker, mustache, groovy-templates, security, oauth2-client, oauth2-authorization-server, oauth2-resource-server, data-ldap, okta, jdbc, data-jpa, data-jdbc, data-r2dbc, mybatis, liquibase, flyway, jooq, db2, derby, h2, hsql, mariadb, sqlserver, mysql, oracle, postgresql, data-redis, ... |
+
+### 'dependency' command
+
+Show details about Spring dependencies. For example: Spring Web [web] 
+
+![](https://github.com/ivvkopylov/spell/blob/master/assets/dependency-demo.png)
 
 ## License
 
