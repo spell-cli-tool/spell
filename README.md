@@ -69,7 +69,7 @@ create -t gradle-project -l java -g org.example -a demo -j 17 -d devtools,lombok
 
 **'param'** command shows possible values of parameters for command 'create'.
 ```
-!!! Values may change over time !!!
+!!! Some values can be changed over time !!!
 ```
 **Table 1** (values for the first of June 2023)
 
