@@ -67,7 +67,7 @@ create -t gradle-project -l java -g org.example -a demo -j 17 -d devtools,lombok
 
 ### 'param' command
 
-**'param'** command shows possible values of parameters for command 'create'.
+**param** command shows possible values of parameters for command 'create'.
 ```
 !!! Some values can be changed over time !!!
 ```
@@ -87,7 +87,7 @@ create -t gradle-project -l java -g org.example -a demo -j 17 -d devtools,lombok
 
 ### 'dependency' command
 
-Show details about Spring dependencies. For example: Spring Web [web] 
+**dependency** command shows details about Spring dependencies. For example: Spring Web [web] 
 
 ![](https://github.com/ivvkopylov/spell/blob/master/assets/dependency-demo.png)
 
