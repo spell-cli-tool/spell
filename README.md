@@ -48,10 +48,10 @@ Download appropriate zip archive with executable binary file for Windows,
 macOS, or Linux, unzip and launch spell executable file.
 Also it's possible to download zip archive with executable jar and launch tool with command `java -jar spell-{version}.jar`.
 
-- jar: [package-spell-jar-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/package-spell-jar-v0.2.0.zip)
-- Windows: [package-native-windows-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/package-native-windows-v0.2.0.zip)
-- Linux: [package-native-ubuntu-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/package-native-ubuntu-v0.2.0.zip)
-- macOS: [package-native-macos-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/package-native-macos-v0.2.0.zip)
+- jar: [spell-jar-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/spell-jar-v0.2.0.zip)
+- Windows: [native-windows-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/native-windows-v0.2.0.zip)
+- Linux: [native-ubuntu-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/native-ubuntu-v0.2.0.zip)
+- macOS: [native-macos-v0.2.0.zip](https://github.com/spell-cli-tool/spell/releases/download/v0.2.0/native-macos-v0.2.0.zip)
 
 All releases page: [https://github.com/spell-cli-tool/spell/releases](https://github.com/spell-cli-tool/spell/releases)
 
