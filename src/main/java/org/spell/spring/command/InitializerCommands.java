@@ -12,7 +12,7 @@ import org.spell.spring.client.model.DependenciesValue;
 import org.spell.spring.client.model.Guide;
 import org.spell.spring.client.model.MetadataDto;
 import org.spell.spring.client.model.Reference;
-import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.options.BootVersionValueProvider;
 import org.spell.spring.options.DependencyValueProvider;
 import org.spell.spring.options.JavaVersionValueProvider;
@@ -35,7 +35,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.ArrayTableModel;
 import org.springframework.shell.table.BorderStyle;
-import org.springframework.shell.table.CellMatchers;
 import org.springframework.shell.table.TableBuilder;
 import org.springframework.shell.table.TableModel;
 import org.springframework.util.CollectionUtils;
@@ -55,7 +54,7 @@ public class InitializerCommands extends BaseShellComponent {
   }
 
   @ShellMethod(key = "dependency", value = "Show details of selected dependencies.")
-  public void dependency() {
+  public void showDependenciesInfo() {
 
     MetadataDto metadata = service.retrieveMetadata();
     List<String> names = selectDependenciesForDetails();
@@ -111,26 +110,26 @@ public class InitializerCommands extends BaseShellComponent {
 
 
   @ShellMethod(key = "param", value = "Show values (examples) for params of the 'create' command.")
-  public void retrieveParamsValues() {
+  public void showParamsValues() {
     Object[][] sampleData = new Object[][] {
         {"Param", "Values"},
-        {String.format("%s, %s", InitializerConstant.SHORT_TYPE_PARAM, InitializerConstant.TYPE_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_TYPE_PARAM, CommandConstant.TYPE_PARAM),
           String.join(", ", service.retrieveTypeIds())},
-        {String.format("%s, %s", InitializerConstant.SHORT_LANGUAGE_PARAM, InitializerConstant.LANGUAGE_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_LANGUAGE_PARAM, CommandConstant.LANGUAGE_PARAM),
             String.join(", ", service.retrieveLanguageIds())},
-        {String.format("%s, %s", InitializerConstant.SHORT_BOOT_VERSION_PARAM, InitializerConstant.BOOT_VERSION_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_BOOT_VERSION_PARAM, CommandConstant.BOOT_VERSION_PARAM),
             String.join(", ", service.retrieveBootVersionIds())},
-        {String.format("%s, %s", InitializerConstant.SHORT_GROUP_PARAM, InitializerConstant.GROUP_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_GROUP_PARAM, CommandConstant.GROUP_PARAM),
             service.defaultGroupId()},
-        {String.format("%s, %s", InitializerConstant.SHORT_ARTIFACT_PARAM, InitializerConstant.ARTIFACT_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_ARTIFACT_PARAM, CommandConstant.ARTIFACT_PARAM),
             service.defaultArtifactId()},
-        {String.format("%s, %s", InitializerConstant.SHORT_NAME_PARAM, InitializerConstant.NAME_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_FOLDER_PARAM, CommandConstant.FOLDER_PARAM),
             service.defaultArtifactId()},
-        {String.format("%s, %s", InitializerConstant.SHORT_PACKAGING_PARAM, InitializerConstant.PACKAGING_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_PACKAGING_PARAM, CommandConstant.PACKAGING_PARAM),
             String.join(", ", service.retrievePackagingIds())},
-        {String.format("%s, %s", InitializerConstant.SHORT_JAVA_VERSION_PARAM, InitializerConstant.JAVA_VERSION_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_JAVA_VERSION_PARAM, CommandConstant.JAVA_VERSION_PARAM),
             String.join(", ", service.retrieveJavaVersionIds())},
-        {String.format("%s, %s", InitializerConstant.SHORT_DEPENDENCIES_PARAM, InitializerConstant.DEPENDENCIES_PARAM),
+        {String.format("%s, %s", CommandConstant.SHORT_DEPENDENCIES_PARAM, CommandConstant.DEPENDENCIES_PARAM),
             String.join(", ", service.retrieveDependencyIds())},
     };
     TableModel model = new ArrayTableModel(sampleData);
@@ -143,52 +142,52 @@ public class InitializerCommands extends BaseShellComponent {
   public void create(
       @ValidType
       @ShellOption(
-          value = {InitializerConstant.SHORT_TYPE_PARAM, InitializerConstant.TYPE_PARAM},
+          value = {CommandConstant.SHORT_TYPE_PARAM, CommandConstant.TYPE_PARAM},
           valueProvider = TypeValueProvider.class,
           help = "Project type: Gradle or Maven",
           defaultValue = "") String type,
       @ValidLanguage
       @ShellOption(
-          value = {InitializerConstant.SHORT_LANGUAGE_PARAM, InitializerConstant.LANGUAGE_PARAM},
+          value = {CommandConstant.SHORT_LANGUAGE_PARAM, CommandConstant.LANGUAGE_PARAM},
           valueProvider = LanguageValueProvider.class,
           help = "Programming language: Java, Kotlin, Groovy",
           defaultValue = "") String language,
       @ValidBootVersion
       @ShellOption(
-          value = {InitializerConstant.SHORT_BOOT_VERSION_PARAM, InitializerConstant.BOOT_VERSION_PARAM},
+          value = {CommandConstant.SHORT_BOOT_VERSION_PARAM, CommandConstant.BOOT_VERSION_PARAM},
           valueProvider = BootVersionValueProvider.class,
           help = "Spring Boot version",
           defaultValue = "") String bootVersion,
       @ValidGroup
       @ShellOption(
-          value = {InitializerConstant.SHORT_GROUP_PARAM, InitializerConstant.GROUP_PARAM},
+          value = {CommandConstant.SHORT_GROUP_PARAM, CommandConstant.GROUP_PARAM},
           help = "Project metadata: group id (for example: com.example)",
           defaultValue = "") String groupId,
       @ValidArtifact
       @ShellOption(
-          value = {InitializerConstant.SHORT_ARTIFACT_PARAM, InitializerConstant.ARTIFACT_PARAM},
+          value = {CommandConstant.SHORT_ARTIFACT_PARAM, CommandConstant.ARTIFACT_PARAM},
           help = "Project metadata: artifact id (for example: demo)",
           defaultValue = "") String artifactId,
       @ValidName
       @ShellOption(
-          value = {InitializerConstant.SHORT_NAME_PARAM, InitializerConstant.NAME_PARAM},
+          value = {CommandConstant.SHORT_FOLDER_PARAM, CommandConstant.FOLDER_PARAM},
           help = "Project metadata: name. Project folder name (for example: demo)",
-          defaultValue = "") String name,
+          defaultValue = "") String folder,
       @ValidPackaging
       @ShellOption(
-          value = {InitializerConstant.SHORT_PACKAGING_PARAM, InitializerConstant.PACKAGING_PARAM},
+          value = {CommandConstant.SHORT_PACKAGING_PARAM, CommandConstant.PACKAGING_PARAM},
           valueProvider = PackagingValueProvider.class,
           help = "Project metadata: packaging: Jar or War",
           defaultValue = "") String packaging,
       @ValidJavaVersion
       @ShellOption(
-          value = {InitializerConstant.SHORT_JAVA_VERSION_PARAM, InitializerConstant.JAVA_VERSION_PARAM},
+          value = {CommandConstant.SHORT_JAVA_VERSION_PARAM, CommandConstant.JAVA_VERSION_PARAM},
           valueProvider = JavaVersionValueProvider.class,
           help = "Project metadata: javaVersion",
           defaultValue = "") String javaVersion,
       @ValidDependencies
       @ShellOption(
-          value = {InitializerConstant.SHORT_DEPENDENCIES_PARAM, InitializerConstant.DEPENDENCIES_PARAM},
+          value = {CommandConstant.SHORT_DEPENDENCIES_PARAM, CommandConstant.DEPENDENCIES_PARAM},
           valueProvider = DependencyValueProvider.class,
           help = "Spring project dependencies",
           defaultValue = "") String dependencies) {
@@ -220,11 +219,11 @@ public class InitializerCommands extends BaseShellComponent {
     }
     params.append(toParam(RequestParam.ARTIFACT_ID.getValue(), artifactId));
 
-    if (!StringUtils.hasText(name)) {
-      name = artifactId;
+    if (!StringUtils.hasText(folder)) {
+      folder = artifactId;
     }
-    params.append(toParam(RequestParam.NAME.getValue(), name));
-    params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
+    params.append(toParam(RequestParam.NAME.getValue(), folder));
+    params.append(toParam(RequestParam.BASE_DIR.getValue(), folder));
 
     String packageName = groupId + "." + artifactId;
     params.append(toParam(RequestParam.PACKAGE_NAME.getValue(), packageName));
@@ -256,7 +255,7 @@ public class InitializerCommands extends BaseShellComponent {
     printCreateResultInfo("Spring Boot", bootVersion);
     printCreateResultInfo("Group", groupId);
     printCreateResultInfo("Artifact", artifactId);
-    printCreateResultInfo("Name", name);
+    printCreateResultInfo("Name", folder);
     printCreateResultInfo("Package name", packageName);
     printCreateResultInfo("Packaging", packaging);
     printCreateResultInfo("Java", javaVersion);
@@ -275,12 +274,12 @@ public class InitializerCommands extends BaseShellComponent {
     params.append(toParam(RequestParam.LANGUAGE.getValue(), selectLanguage()));
     params.append(toParam(RequestParam.BOOT_VERSION.getValue(), selectSpringBootVersion()));
     String groupId = setInput("Group", "com.example",
-        InitializerConstant.GROUP_PATTERN);
+        CommandConstant.GROUP_PATTERN);
     params.append(toParam(RequestParam.GROUP_ID.getValue(), groupId));
     String artifactId = setInput("Artifact", "demo",
-        InitializerConstant.ARTIFACT_PATTERN);
+        CommandConstant.ARTIFACT_PATTERN);
     params.append(toParam(RequestParam.ARTIFACT_ID.getValue(), artifactId));
-    String name = setFolder("Name", artifactId);
+    String name = setFolder("Folder", artifactId);
     params.append(toParam(RequestParam.NAME.getValue(), name));
     params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
     params.append(toParam(RequestParam.PACKAGE_NAME.getValue(),

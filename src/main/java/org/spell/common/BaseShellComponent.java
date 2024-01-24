@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.springframework.shell.component.ConfirmationInput;
+import org.springframework.shell.component.ConfirmationInput.ConfirmationInputContext;
 import org.springframework.shell.component.MultiItemSelector;
 import org.springframework.shell.component.MultiItemSelector.MultiItemSelectorContext;
 import org.springframework.shell.component.SingleItemSelector;
@@ -80,6 +82,19 @@ public abstract class BaseShellComponent extends AbstractShellComponent {
 
     } while (repeat);
 
+    return result;
+  }
+
+  protected boolean setConfirmationInput(String name, boolean defaultValue) {
+    ConfirmationInput component = new ConfirmationInput(getTerminal(), name, defaultValue);
+    component.setResourceLoader(getResourceLoader());
+    component.setTemplateExecutor(getTemplateExecutor());
+    ConfirmationInputContext context = component.run(ConfirmationInputContext.empty());
+    boolean result = defaultValue;
+    try {
+      result = context.getResultValue();
+    } catch (Exception ignored) {
+    }
     return result;
   }
 

@@ -3,7 +3,7 @@ package org.spell.spring.validation.validator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.spell.common.ShellHelper;
-import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.service.InitializerService;
 import org.spell.spring.validation.annotation.ValidPackaging;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class PackagingValidator extends AbstractConstraintValidator<ValidPackagi
     if (!packages.contains(packaging)) {
       shellHelper.printError(
           String.format("Incorrect '%s' parameter value. Possible values: [%s]",
-              InitializerConstant.PACKAGING_PARAM,
+              CommandConstant.PACKAGING_PARAM,
               String.join(", ", packages)));
       return false;
     }
