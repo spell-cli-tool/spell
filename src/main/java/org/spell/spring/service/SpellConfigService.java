@@ -40,6 +40,10 @@ public class SpellConfigService {
     }
   }
 
+  public SpellConfig getConfig() {
+    return config;
+  }
+
   public String retrievePath() {
     return configPath.toString();
   }
@@ -99,7 +103,7 @@ public class SpellConfigService {
     return config;
   }
 
-  public String retrieveAsString() {
+  public String retrieveInJsonFormat() {
     String result = "";
     try {
       result = objectMapper.writeValueAsString(config);

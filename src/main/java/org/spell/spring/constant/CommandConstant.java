@@ -41,4 +41,7 @@ public final class CommandConstant {
 
   public static final String REPLACE_PARAM = "--replace";
   public static final String SHORT_REPLACE_PARAM = "-r";
+
+  public static final String JSON_PARAM = "--json";
+  public static final String SHORT_JSON_PARAM = "-js";
 }

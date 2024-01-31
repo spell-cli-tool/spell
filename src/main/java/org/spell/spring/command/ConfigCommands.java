@@ -5,6 +5,7 @@ import org.jline.utils.AttributedStyle;
 import org.spell.common.BaseShellComponent;
 import org.spell.common.FileManager;
 import org.spell.common.ShellHelper;
+import org.spell.spring.config.SpellConfig;
 import org.spell.spring.config.Template;
 import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.options.BootVersionValueProvider;
@@ -27,6 +28,8 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @ShellComponent
 @ShellCommandGroup("Spell configuration commands")
@@ -41,9 +44,62 @@ public class ConfigCommands extends BaseShellComponent {
   }
 
   @ShellMethod(key = "config", value = "Show configuration.")
-  public void showConfig() {
+  public void showConfig(@ShellOption(
+      value = {CommandConstant.JSON_PARAM, CommandConstant.SHORT_JSON_PARAM},
+      help = "Show in json format",
+      defaultValue = "false") Boolean json) {
     print("Config path: ", service.retrievePath());
-    shellHelper.print(service.retrieveAsString());
+    SpellConfig config = service.getConfig();
+
+    if (Boolean.FALSE.equals(json)) {
+      var defaultGroupName = "defaultGroup: ";
+      if (StringUtils.hasText(config.getDefaultGroup())) {
+        shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(defaultGroupName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            config.getDefaultGroup()));
+      } else {
+        shellHelper.print(String.format("%s%s",
+            shellHelper.getStyledMessage(defaultGroupName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            shellHelper.getStyledMessage("[Default group name is not set]",
+                AttributedStyle.DEFAULT.italic().faint())));
+      }
+
+      var defaultArtifactName = "defaultArtifact: ";
+      if (StringUtils.hasText(config.getDefaultArtifact())) {
+        shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(defaultArtifactName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            config.getDefaultArtifact()));
+      } else {
+        shellHelper.print(String.format("%s%s",
+            shellHelper.getStyledMessage(defaultArtifactName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            shellHelper.getStyledMessage("[Default artifact name is not set]",
+                AttributedStyle.DEFAULT.italic().faint())));
+      }
+      if (!CollectionUtils.isEmpty(config.getTemplates())) {
+        shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage("Templates: ",
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()), ""));
+        for (Template template : config.getTemplates()) {
+          shellHelper.print(String.format("%s%s",
+              shellHelper.getStyledMessage(" Template: ",
+                  AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+              template.getName()));
+          printTemplateParam("  -type: ", template.getType());
+          printTemplateParam("  -language: ", template.getLanguage());
+          printTemplateParam("  -bootVersion: ", template.getBootVersion());
+          printTemplateParam("  -group: ", template.getGroup());
+          printTemplateParam("  -artifact: ", template.getArtifact());
+          printTemplateParam("  -folder: ", template.getFolder());
+          printTemplateParam("  -packaging: ", template.getPackaging());
+          printTemplateParam("  -dependencies: ", template.getDependencies());
+        }
+      } else {
+        print("Templates: ", "Templates are not set");
+      }
+    } else {
+      shellHelper.print(service.retrieveInJsonFormat());
+    }
   }
 
   @ShellMethod(key = "set-group", value = "Set default group name.")
@@ -171,5 +227,12 @@ public class ConfigCommands extends BaseShellComponent {
   private void print(String name, String value) {
     shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(name,
         AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold()), value));
+  }
+
+  private void printTemplateParam(String name, String value) {
+    if (StringUtils.hasText(value)) {
+      shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(name,
+          AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE)), value));
+    }
   }
 }
