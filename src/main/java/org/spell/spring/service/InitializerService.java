@@ -24,8 +24,10 @@ import org.spell.spring.client.model.DependenciesValue;
 import org.spell.spring.client.model.MetadataDto;
 import org.spell.spring.client.model.MetadataValue;
 import org.spell.spring.client.model.TypeValue;
+import org.spell.spring.config.Template;
 import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -57,9 +59,19 @@ public class InitializerService {
     return metadata.getType().getDefaultValue();
   }
 
+  public String typeFromTemplateOrDefault(Template template) {
+    String type = template != null && StringUtils.hasText(template.getType()) ? template.getType() : "";
+    return StringUtils.hasText(type) ? type : defaultType();
+  }
+
   public String defaultLanguage() {
     MetadataDto metadata = retrieveMetadata();
     return metadata.getLanguage().getDefaultValue();
+  }
+
+  public String languageFromTemplateOrDefault(Template template) {
+    String language = template != null && StringUtils.hasText(template.getLanguage()) ? template.getLanguage() : "";
+    return StringUtils.hasText(language) ? language : defaultLanguage();
   }
 
   public String defaultBootVersion() {
@@ -67,9 +79,21 @@ public class InitializerService {
     return metadata.getBootVersion().getDefaultValue();
   }
 
+  public String bootVersionFromTemplateOrDefault(Template template) {
+    String bootVersion = template != null && StringUtils.hasText(template.getBootVersion()) ?
+        template.getBootVersion() : "";
+    return StringUtils.hasText(bootVersion) ? bootVersion : defaultBootVersion();
+  }
+
   public String defaultGroupId() {
     MetadataDto metadata = retrieveMetadata();
     return metadata.getGroupId().getDefaultValue();
+  }
+
+  public String groupIdFromTemplateOrDefault(Template template) {
+    String groupId = template != null && StringUtils.hasText(template.getGroup()) ?
+        template.getGroup() : "";
+    return StringUtils.hasText(groupId) ? groupId : defaultGroupId();
   }
 
   public String defaultArtifactId() {
@@ -77,9 +101,10 @@ public class InitializerService {
     return metadata.getArtifactId().getDefaultValue();
   }
 
-  public String defaultDescription() {
-    MetadataDto metadata = retrieveMetadata();
-    return metadata.getDescription().getDefaultValue();
+  public String artifactIdFromTemplateOrDefault(Template template) {
+    String artifactId = template != null && StringUtils.hasText(template.getArtifact()) ?
+        template.getArtifact() : "";
+    return StringUtils.hasText(artifactId) ? artifactId : defaultArtifactId();
   }
 
   public String defaultPackaging() {
@@ -87,9 +112,26 @@ public class InitializerService {
     return metadata.getPackaging().getDefaultValue();
   }
 
+  public String packagingFromTemplateOrDefault(Template template) {
+    String packaging = template != null && StringUtils.hasText(template.getPackaging()) ?
+        template.getPackaging() : "";
+    return StringUtils.hasText(packaging) ? packaging : defaultPackaging();
+  }
+
   public String defaultJavaVersion() {
     MetadataDto metadata = retrieveMetadata();
     return metadata.getJavaVersion().getDefaultValue();
+  }
+
+  public String javaVersionFromTemplateOrDefault(Template template) {
+    String javaVersion = template != null && StringUtils.hasText(template.getJavaVersion()) ?
+        template.getJavaVersion() : "";
+    return StringUtils.hasText(javaVersion) ? javaVersion : defaultJavaVersion();
+  }
+
+  public String dependenciesFromTemplate(Template template) {
+    return template != null && StringUtils.hasText(template.getDependencies()) ?
+        template.getDependencies() : "";
   }
 
   public List<SelectorItem<String>> retrieveTypes() {

@@ -10,13 +10,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.spell.spring.config.SpellConfig;
 import org.spell.spring.config.Template;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +60,20 @@ public class SpellConfigService {
       return existedTemplate.isPresent();
     }
     return false;
+  }
+
+  public Template retrieveTemplate(String name) {
+    if (!StringUtils.hasText(name)) {
+      return null;
+    }
+    if (!CollectionUtils.isEmpty(config.getTemplates())) {
+      Optional<Template> existedTemplate = config.getTemplates()
+          .stream()
+          .filter(t -> t.getName().equalsIgnoreCase(name))
+          .findFirst();
+      return existedTemplate.orElse(null);
+    }
+    return null;
   }
 
   public void createOrReplaceTemplate(Template template) {
@@ -101,6 +118,13 @@ public class SpellConfigService {
 
   public SpellConfig retrieve() {
     return config;
+  }
+
+  public List<String> retrieveTemplateNames() {
+    if (CollectionUtils.isEmpty(config.getTemplates())) {
+      return Collections.emptyList();
+    }
+    return config.getTemplates().stream().map(Template::getName).collect(Collectors.toList());
   }
 
   public String retrieveInJsonFormat() {

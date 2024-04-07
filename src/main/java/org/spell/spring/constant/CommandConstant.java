@@ -38,6 +38,7 @@ public final class CommandConstant {
   public static final String SHORT_JAVA_VERSION_PARAM = "-j";
   public static final String DEPENDENCIES_PARAM = "--dependencies";
   public static final String SHORT_DEPENDENCIES_PARAM = "-d";
+  public static final String TEMPLATE_PARAM = "--template";
 
   public static final String REPLACE_PARAM = "--replace";
   public static final String SHORT_REPLACE_PARAM = "-r";
