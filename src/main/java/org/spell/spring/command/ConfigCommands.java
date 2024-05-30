@@ -46,7 +46,7 @@ public class ConfigCommands extends BaseShellComponent {
     this.initializerService = initializerService;
   }
 
-  @ShellMethod(key = "config", value = "Show configuration.")
+  @ShellMethod(key = "config", value = "Show configuration file.")
   public void showConfig(@ShellOption(
       value = {CommandConstant.JSON_PARAM, CommandConstant.SHORT_JSON_PARAM},
       help = "Show in json format",

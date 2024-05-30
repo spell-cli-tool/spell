@@ -256,17 +256,17 @@ public class InitializerCommands extends BaseShellComponent {
     params.append(String.format("?%s=%s", RequestParam.TYPE.getValue(), type));
     params.append(toParam(RequestParam.LANGUAGE.getValue(), selectLanguage()));
     params.append(toParam(RequestParam.BOOT_VERSION.getValue(), selectSpringBootVersion()));
-    String groupId = setInput("Group", "com.example",
+    String groupId = setInput("Group:", "com.example",
         CommandConstant.GROUP_PATTERN);
     params.append(toParam(RequestParam.GROUP_ID.getValue(), groupId));
-    String artifactId = setInput("Artifact", "demo",
+    String artifactId = setInput("Artifact:", "demo",
         CommandConstant.ARTIFACT_PATTERN);
     params.append(toParam(RequestParam.ARTIFACT_ID.getValue(), artifactId));
-    String name = setFolder("Folder", artifactId);
+    String name = setFolder("Folder:", artifactId);
     params.append(toParam(RequestParam.NAME.getValue(), name));
     params.append(toParam(RequestParam.BASE_DIR.getValue(), name));
     params.append(toParam(RequestParam.PACKAGE_NAME.getValue(),
-        setInput("Package name", groupId + "." + artifactId)));
+        setInput("Package name:", groupId + "." + artifactId)));
     params.append(toParam(RequestParam.PACKAGING.getValue(), selectPackaging()));
     params.append(toParam(RequestParam.JAVA_VERSION.getValue(), selectJavaVersion()));
     params.append(toParam(RequestParam.DEPENDENCIES.getValue(), selectMultipleDependencies()));
@@ -286,37 +286,37 @@ public class InitializerCommands extends BaseShellComponent {
 
   private String selectType() {
     var items = service.retrieveTypes();
-    return selectSingleItem("Project", items);
+    return selectSingleItem("Project:", items);
   }
 
   private String selectLanguage() {
     var items = service.retrieveLanguages();
-    return selectSingleItem("Language", items);
+    return selectSingleItem("Language:", items);
   }
 
   private String selectSpringBootVersion() {
     var items = service.retrieveSpringBootVersion();
-    return selectSingleItem("Spring Boot", items);
+    return selectSingleItem("Spring Boot:", items);
   }
 
   private String selectPackaging() {
     var items = service.retrievePackaging();
-    return selectSingleItem("Packaging", items);
+    return selectSingleItem("Packaging:", items);
   }
 
   private String selectJavaVersion() {
     var items = service.retrieveJavaVersion();
-    return selectSingleItem("Java", items);
+    return selectSingleItem("Java:", items);
   }
 
   private String selectMultipleDependencies() {
     var items = service.retrieveDependenciesWithGroups();
-    return String.join(",", selectMultipleItems("Dependencies", items));
+    return String.join(",", selectMultipleItems("Dependencies:", items));
   }
 
   private List<String> selectDependenciesForDetails() {
     var items = service.retrieveDependenciesWithoutGroups();
-    return selectMultipleItems("Dependencies details", items);
+    return selectMultipleItems("Dependencies details:", items);
   }
 
   private String toParam(String param, String value) {
