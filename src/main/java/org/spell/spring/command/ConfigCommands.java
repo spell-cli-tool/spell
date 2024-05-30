@@ -14,6 +14,7 @@ import org.spell.spring.options.JavaVersionValueProvider;
 import org.spell.spring.options.LanguageValueProvider;
 import org.spell.spring.options.PackagingValueProvider;
 import org.spell.spring.options.TypeValueProvider;
+import org.spell.spring.service.InitializerService;
 import org.spell.spring.service.SpellConfigService;
 import org.spell.spring.validation.annotation.ValidArtifact;
 import org.spell.spring.validation.annotation.ValidBootVersion;
@@ -36,11 +37,13 @@ import org.springframework.util.StringUtils;
 public class ConfigCommands extends BaseShellComponent {
 
   private final SpellConfigService service;
+  private final InitializerService initializerService;
 
   public ConfigCommands(ShellHelper shellHelper,
-      FileManager fileManager, SpellConfigService service) {
+      FileManager fileManager, SpellConfigService service, InitializerService initializerService) {
     super(shellHelper, fileManager);
     this.service = service;
+    this.initializerService = initializerService;
   }
 
   @ShellMethod(key = "config", value = "Show configuration.")
@@ -191,25 +194,28 @@ public class ConfigCommands extends BaseShellComponent {
         .setPackaging(packaging)
         .setJavaVersion(javaVersion)
         .setDependencies(dependencies);
-    if (!replace && service.isTemplateExist(template.getName())) {
-      boolean rewrite = setConfirmationInput(
-          String.format("Template '%s' already exists. Do you want to replace?",
-              template.getName()),
-          false);
-      if (rewrite) {
-        service.createOrReplaceTemplate(template);
-        shellHelper.print(String.format("Template '%s' is successfully replaced!", name),
-            AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
-      }
-    } else {
-      service.createOrReplaceTemplate(template);
-      shellHelper.print(String.format("Template '%s' is successfully created!", name),
-          AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
-    }
+    createOrReplaceTemplate(template, replace);
+  }
+
+  @ShellMethod(key = "iset-template", value = "Create/replace template interactively.")
+  public void interactiveSetTemplate() {
+    Template template = new Template();
+    template.setName(setInput("Template name:", "template"));
+    template.setType(selectType());
+    template.setLanguage(selectLanguage());
+    template.setBootVersion(selectSpringBootVersion());
+    template.setGroup(setInput("Group:", "com.example", CommandConstant.GROUP_PATTERN));
+    String artifactId = setInput("Artifact:", "demo", CommandConstant.ARTIFACT_PATTERN);
+    template.setArtifact(artifactId);
+    template.setFolder(setInput("Folder:", artifactId));
+    template.setPackaging(selectPackaging());
+    template.setJavaVersion(selectJavaVersion());
+    template.setDependencies(selectMultipleDependencies());
+    createOrReplaceTemplate(template, false);
   }
 
   @ShellMethod(key = "remove-template", value = "Remove template.")
-  public void setTemplate(
+  public void removeTemplate(
       @ShellOption(
           value = {CommandConstant.SHORT_TEMPLATE_NAME_PARAM, CommandConstant.TEMPLATE_NAME_PARAM},
           help = "Template name",
@@ -234,5 +240,53 @@ public class ConfigCommands extends BaseShellComponent {
       shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(name,
           AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE)), value));
     }
+  }
+
+  private void createOrReplaceTemplate(Template template, boolean replace) {
+    if (!replace && service.isTemplateExist(template.getName())) {
+      boolean rewrite = setConfirmationInput(
+          String.format("Template '%s' already exists. Do you want to replace?",
+              template.getName()),
+          false);
+      if (rewrite) {
+        service.createOrReplaceTemplate(template);
+        shellHelper.print(String.format("Template '%s' is successfully replaced!", template.getName()),
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
+      }
+    } else {
+      service.createOrReplaceTemplate(template);
+      shellHelper.print(String.format("Template '%s' is successfully created!", template.getName()),
+          AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
+    }
+  }
+
+  private String selectType() {
+    var items = initializerService.retrieveTypes();
+    return selectSingleItem("Project:", items);
+  }
+
+  private String selectLanguage() {
+    var items = initializerService.retrieveLanguages();
+    return selectSingleItem("Language:", items);
+  }
+
+  private String selectSpringBootVersion() {
+    var items = initializerService.retrieveSpringBootVersion();
+    return selectSingleItem("Spring Boot:", items);
+  }
+
+  private String selectPackaging() {
+    var items = initializerService.retrievePackaging();
+    return selectSingleItem("Packaging:", items);
+  }
+
+  private String selectJavaVersion() {
+    var items = initializerService.retrieveJavaVersion();
+    return selectSingleItem("Java:", items);
+  }
+
+  private String selectMultipleDependencies() {
+    var items = initializerService.retrieveDependenciesWithGroups();
+    return String.join(",", selectMultipleItems("Dependencies:", items));
   }
 }

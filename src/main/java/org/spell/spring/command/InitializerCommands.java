@@ -216,7 +216,7 @@ public class InitializerCommands extends BaseShellComponent {
     bootVersion = configureBootVersion(bootVersion, template, params);
     groupId = configureGroupId(groupId, template, params);
     artifactId = configureArtifactId(artifactId, template, params);
-    folder = configureFolder(folder, artifactId, params);
+    folder = configureFolder(folder, artifactId, template, params);
     var packageName = configurePackageName(groupId, artifactId, params);
     packaging = configurePackaging(packaging, template, params);
     javaVersion = configureJavaVersion(javaVersion, template, params);
@@ -373,9 +373,13 @@ public class InitializerCommands extends BaseShellComponent {
     return artifactId;
   }
 
-  private String configureFolder(String folder, String artifactId, StringBuilder params) {
+  private String configureFolder(String folder, String artifactId, Template template, StringBuilder params) {
     if (!StringUtils.hasText(folder)) {
-      folder = artifactId;
+      if (template != null && StringUtils.hasText(template.getFolder())) {
+        folder = template.getFolder();
+      } else {
+        folder = artifactId;
+      }
     }
     params.append(toParam(RequestParam.NAME.getValue(), folder));
     params.append(toParam(RequestParam.BASE_DIR.getValue(), folder));

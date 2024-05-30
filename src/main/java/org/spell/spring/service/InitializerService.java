@@ -54,35 +54,54 @@ public class InitializerService {
     return metadata;
   }
 
-  public String defaultType() {
+  public String typeOrDefault(String type) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getType().getDefaultValue();
+    if (!StringUtils.hasText(type)) {
+      return metadata.getType().getDefaultValue();
+    }
+
+    var value = metadata.getType().getValues().stream().filter(x -> type.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? type : metadata.getType().getDefaultValue();
   }
 
   public String typeFromTemplateOrDefault(Template template) {
     String type = template != null && StringUtils.hasText(template.getType()) ? template.getType() : "";
-    return StringUtils.hasText(type) ? type : defaultType();
+    return typeOrDefault(type);
   }
 
-  public String defaultLanguage() {
+  public String languageOrDefault(String language) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getLanguage().getDefaultValue();
+    if (!StringUtils.hasText(language)) {
+      return metadata.getLanguage().getDefaultValue();
+    }
+
+    var value = metadata.getLanguage().getValues().stream().filter(x -> language.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? language : metadata.getLanguage().getDefaultValue();
   }
 
   public String languageFromTemplateOrDefault(Template template) {
     String language = template != null && StringUtils.hasText(template.getLanguage()) ? template.getLanguage() : "";
-    return StringUtils.hasText(language) ? language : defaultLanguage();
+    return languageOrDefault(language);
   }
 
-  public String defaultBootVersion() {
+  public String bootVersionOrDefault(String bootVersion) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getBootVersion().getDefaultValue();
+
+    if (!StringUtils.hasText(bootVersion)) {
+      return metadata.getBootVersion().getDefaultValue();
+    }
+
+    var value = metadata.getBootVersion().getValues().stream().filter(x -> bootVersion.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? bootVersion : metadata.getBootVersion().getDefaultValue();
   }
 
   public String bootVersionFromTemplateOrDefault(Template template) {
     String bootVersion = template != null && StringUtils.hasText(template.getBootVersion()) ?
         template.getBootVersion() : "";
-    return StringUtils.hasText(bootVersion) ? bootVersion : defaultBootVersion();
+    return bootVersionOrDefault(bootVersion);
   }
 
   public String defaultGroupId() {
@@ -107,26 +126,40 @@ public class InitializerService {
     return StringUtils.hasText(artifactId) ? artifactId : defaultArtifactId();
   }
 
-  public String defaultPackaging() {
+  public String packagingOrDefault(String packaging) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getPackaging().getDefaultValue();
+
+    if (!StringUtils.hasText(packaging)) {
+      return metadata.getPackaging().getDefaultValue();
+    }
+
+    var value = metadata.getPackaging().getValues().stream().filter(x -> packaging.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? packaging : metadata.getPackaging().getDefaultValue();
   }
 
   public String packagingFromTemplateOrDefault(Template template) {
     String packaging = template != null && StringUtils.hasText(template.getPackaging()) ?
         template.getPackaging() : "";
-    return StringUtils.hasText(packaging) ? packaging : defaultPackaging();
+    return packagingOrDefault(packaging);
   }
 
-  public String defaultJavaVersion() {
+  public String javaVersionOrDefault(String javaVersion) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getJavaVersion().getDefaultValue();
+
+    if (!StringUtils.hasText(javaVersion)) {
+      return metadata.getJavaVersion().getDefaultValue();
+    }
+
+    var value = metadata.getJavaVersion().getValues().stream().filter(x -> javaVersion.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? javaVersion : metadata.getJavaVersion().getDefaultValue();
   }
 
   public String javaVersionFromTemplateOrDefault(Template template) {
     String javaVersion = template != null && StringUtils.hasText(template.getJavaVersion()) ?
         template.getJavaVersion() : "";
-    return StringUtils.hasText(javaVersion) ? javaVersion : defaultJavaVersion();
+    return javaVersionOrDefault(javaVersion);
   }
 
   public String dependenciesFromTemplate(Template template) {
