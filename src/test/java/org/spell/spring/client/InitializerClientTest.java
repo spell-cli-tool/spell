@@ -51,7 +51,7 @@ class InitializerClientTest {
   @Test
   void testBootVersionElement() {
     BootVersionElement element = metadata.getBootVersion();
-    assertEquals(4, element.getValues().size(), "Expected 4 Spring Boot versions");
+    assertEquals(6, element.getValues().size(), "Expected 6 Spring Boot versions");
   }
 
   @Test
@@ -63,6 +63,6 @@ class InitializerClientTest {
   @Test
   void testDependencies() {
     DependenciesElement element = metadata.getDependencies();
-    assertEquals(21, element.getValues().size(), "Expected 21 dependencies");
+    assertEquals(22, element.getValues().size(), "Expected 22 dependencies");
   }
 }
