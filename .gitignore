@@ -2,6 +2,7 @@ HELP.md
 build_native.sh
 spring-shell.log
 .gradle
+.gigaide/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/

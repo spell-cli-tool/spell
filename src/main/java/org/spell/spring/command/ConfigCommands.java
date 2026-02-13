@@ -5,6 +5,7 @@ import org.jline.utils.AttributedStyle;
 import org.spell.common.BaseShellComponent;
 import org.spell.common.FileManager;
 import org.spell.common.ShellHelper;
+import org.spell.spring.config.SpellConfig;
 import org.spell.spring.config.Template;
 import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.options.BootVersionValueProvider;
@@ -13,6 +14,7 @@ import org.spell.spring.options.JavaVersionValueProvider;
 import org.spell.spring.options.LanguageValueProvider;
 import org.spell.spring.options.PackagingValueProvider;
 import org.spell.spring.options.TypeValueProvider;
+import org.spell.spring.service.InitializerService;
 import org.spell.spring.service.SpellConfigService;
 import org.spell.spring.validation.annotation.ValidArtifact;
 import org.spell.spring.validation.annotation.ValidBootVersion;
@@ -27,23 +29,80 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @ShellComponent
 @ShellCommandGroup("Spell configuration commands")
 public class ConfigCommands extends BaseShellComponent {
 
   private final SpellConfigService service;
+  private final InitializerService initializerService;
 
   public ConfigCommands(ShellHelper shellHelper,
-      FileManager fileManager, SpellConfigService service) {
+      FileManager fileManager, SpellConfigService service, InitializerService initializerService) {
     super(shellHelper, fileManager);
     this.service = service;
+    this.initializerService = initializerService;
   }
 
-  @ShellMethod(key = "config", value = "Show configuration.")
-  public void showConfig() {
+  @ShellMethod(key = "config", value = "Show configuration file.")
+  public void showConfig(@ShellOption(
+      value = {CommandConstant.JSON_PARAM, CommandConstant.SHORT_JSON_PARAM},
+      help = "Show in json format",
+      defaultValue = "false") Boolean json) {
     print("Config path: ", service.retrievePath());
-    shellHelper.print(service.retrieveAsString());
+    SpellConfig config = service.getConfig();
+
+    if (Boolean.FALSE.equals(json)) {
+      var defaultGroupName = "defaultGroup: ";
+      if (StringUtils.hasText(config.getDefaultGroup())) {
+        shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(defaultGroupName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            config.getDefaultGroup()));
+      } else {
+        shellHelper.print(String.format("%s%s",
+            shellHelper.getStyledMessage(defaultGroupName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            shellHelper.getStyledMessage("[Default group name is not set]",
+                AttributedStyle.DEFAULT.italic().faint())));
+      }
+
+      var defaultArtifactName = "defaultArtifact: ";
+      if (StringUtils.hasText(config.getDefaultArtifact())) {
+        shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(defaultArtifactName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            config.getDefaultArtifact()));
+      } else {
+        shellHelper.print(String.format("%s%s",
+            shellHelper.getStyledMessage(defaultArtifactName,
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+            shellHelper.getStyledMessage("[Default artifact name is not set]",
+                AttributedStyle.DEFAULT.italic().faint())));
+      }
+      if (!CollectionUtils.isEmpty(config.getTemplates())) {
+        shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage("Templates: ",
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()), ""));
+        for (Template template : config.getTemplates()) {
+          shellHelper.print(String.format("%s%s",
+              shellHelper.getStyledMessage(" Template: ",
+                  AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE).bold()),
+              template.getName()));
+          printTemplateParam("  -type: ", template.getType());
+          printTemplateParam("  -language: ", template.getLanguage());
+          printTemplateParam("  -bootVersion: ", template.getBootVersion());
+          printTemplateParam("  -group: ", template.getGroup());
+          printTemplateParam("  -artifact: ", template.getArtifact());
+          printTemplateParam("  -folder: ", template.getFolder());
+          printTemplateParam("  -packaging: ", template.getPackaging());
+          printTemplateParam("  -dependencies: ", template.getDependencies());
+        }
+      } else {
+        print("Templates: ", "Templates are not set");
+      }
+    } else {
+      shellHelper.print(service.retrieveInJsonFormat());
+    }
   }
 
   @ShellMethod(key = "set-group", value = "Set default group name.")
@@ -135,25 +194,28 @@ public class ConfigCommands extends BaseShellComponent {
         .setPackaging(packaging)
         .setJavaVersion(javaVersion)
         .setDependencies(dependencies);
-    if (!replace && service.isTemplateExist(template.getName())) {
-      boolean rewrite = setConfirmationInput(
-          String.format("Template '%s' already exists. Do you want to replace?",
-              template.getName()),
-          false);
-      if (rewrite) {
-        service.createOrReplaceTemplate(template);
-        shellHelper.print(String.format("Template '%s' is successfully replaced!", name),
-            AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
-      }
-    } else {
-      service.createOrReplaceTemplate(template);
-      shellHelper.print(String.format("Template '%s' is successfully created!", name),
-          AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
-    }
+    createOrReplaceTemplate(template, replace);
+  }
+
+  @ShellMethod(key = "iset-template", value = "Create/replace template interactively.")
+  public void interactiveSetTemplate() {
+    Template template = new Template();
+    template.setName(setInput("Template name:", "template"));
+    template.setType(selectType());
+    template.setLanguage(selectLanguage());
+    template.setBootVersion(selectSpringBootVersion());
+    template.setGroup(setInput("Group:", "com.example", CommandConstant.GROUP_PATTERN));
+    String artifactId = setInput("Artifact:", "demo", CommandConstant.ARTIFACT_PATTERN);
+    template.setArtifact(artifactId);
+    template.setFolder(setInput("Folder:", artifactId));
+    template.setPackaging(selectPackaging());
+    template.setJavaVersion(selectJavaVersion());
+    template.setDependencies(selectMultipleDependencies());
+    createOrReplaceTemplate(template, false);
   }
 
   @ShellMethod(key = "remove-template", value = "Remove template.")
-  public void setTemplate(
+  public void removeTemplate(
       @ShellOption(
           value = {CommandConstant.SHORT_TEMPLATE_NAME_PARAM, CommandConstant.TEMPLATE_NAME_PARAM},
           help = "Template name",
@@ -171,5 +233,60 @@ public class ConfigCommands extends BaseShellComponent {
   private void print(String name, String value) {
     shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(name,
         AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold()), value));
+  }
+
+  private void printTemplateParam(String name, String value) {
+    if (StringUtils.hasText(value)) {
+      shellHelper.print(String.format("%s%s", shellHelper.getStyledMessage(name,
+          AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE)), value));
+    }
+  }
+
+  private void createOrReplaceTemplate(Template template, boolean replace) {
+    if (!replace && service.isTemplateExist(template.getName())) {
+      boolean rewrite = setConfirmationInput(
+          String.format("Template '%s' already exists. Do you want to replace?",
+              template.getName()),
+          false);
+      if (rewrite) {
+        service.createOrReplaceTemplate(template);
+        shellHelper.print(String.format("Template '%s' is successfully replaced!", template.getName()),
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
+      }
+    } else {
+      service.createOrReplaceTemplate(template);
+      shellHelper.print(String.format("Template '%s' is successfully created!", template.getName()),
+          AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN).bold());
+    }
+  }
+
+  private String selectType() {
+    var items = initializerService.retrieveTypes();
+    return selectSingleItem("Project:", items);
+  }
+
+  private String selectLanguage() {
+    var items = initializerService.retrieveLanguages();
+    return selectSingleItem("Language:", items);
+  }
+
+  private String selectSpringBootVersion() {
+    var items = initializerService.retrieveSpringBootVersion();
+    return selectSingleItem("Spring Boot:", items);
+  }
+
+  private String selectPackaging() {
+    var items = initializerService.retrievePackaging();
+    return selectSingleItem("Packaging:", items);
+  }
+
+  private String selectJavaVersion() {
+    var items = initializerService.retrieveJavaVersion();
+    return selectSingleItem("Java:", items);
+  }
+
+  private String selectMultipleDependencies() {
+    var items = initializerService.retrieveDependenciesWithGroups();
+    return String.join(",", selectMultipleItems("Dependencies:", items));
   }
 }

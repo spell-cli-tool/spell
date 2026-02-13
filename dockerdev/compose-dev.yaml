@@ -1,0 +1,16 @@
+name: spell-dev
+
+services:
+  spellcd :
+    container_name: spell
+    entrypoint:
+    - sleep
+    - infinity
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    volumes:
+    - type: bind
+      source: ../
+      target: /app

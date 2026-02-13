@@ -9,9 +9,11 @@
        "Y8888P"  888        8888888888 88888888 88888888
       ---------------------------------------( ${application.formatted-version} )
 
-  This is a Spring Initializr (https://start.spring.io/) CLI tool
+  This is a Spring Initializer CLI tool (based on https://start.spring.io/)
   for generating quickstart projects that can be easily customized.
   Possible customizations include a project's dependencies,
   Java version, and build system or build structure.
+
+  https://spell-cli-tool.github.io
 
   Type "help" for more information.

@@ -45,7 +45,7 @@ class InitializerClientTest {
   @Test
   void testJavaVersionElement() {
     JavaVersionElement element = metadata.getJavaVersion();
-    assertEquals(2, element.getValues().size(), "Expected 2 java versions");
+    assertEquals(3, element.getValues().size(), "Expected 3 java versions");
   }
 
   @Test
@@ -63,6 +63,6 @@ class InitializerClientTest {
   @Test
   void testDependencies() {
     DependenciesElement element = metadata.getDependencies();
-    assertEquals(20, element.getValues().size(), "Expected 20 dependencies");
+    assertEquals(22, element.getValues().size(), "Expected 22 dependencies");
   }
 }
