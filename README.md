@@ -8,16 +8,19 @@
       Y88b  d88P 888        888        888      888
        "Y8888P"  888        8888888888 88888888 88888888
 
-This is a Spring Initializr (https://start.spring.io/) CLI tool for generating quickstart projects 
+This is a Spring Initializer CLI tool (based on https://start.spring.io/) for generating quickstart projects 
 that can be easily customized.
-Possible customizations include a project's dependencies, Java version, and build system or
-build structure.
+Possible customizations include a project's dependencies,
+Java version, and build system or build structure.
 
 ## Main commands
 - **help**: Display help about available commands.
 - **icreate**: Create Spring Boot projects interactively. This command allows you to 
 create new Spring Boot projects with ease. Simply run the command and follow the prompts to create a new project.
 - **create**: Create a Spring Boot project non-interactively with params. See also 'dependency' and 'param' commands.
+- **config**: Show configuration file.
+- **set-template**: Create/replace template non-interactively with params. See also 'dependency' and 'param' commands.
+- **iset-template**: Create/replace template interactively.
 
 ## All commands
 
@@ -27,6 +30,8 @@ create new Spring Boot projects with ease. Simply run the command and follow the
 - **create**: Create a Spring Boot project non-interactively with params
 - **dependency**: Show details about Spring dependencies
 - **param**: Show values (examples) for params of the 'create' command
+
+
 
 ### Basic OS commands
 
@@ -62,28 +67,12 @@ All releases page: [https://github.com/spell-cli-tool/spell/releases](https://gi
 ### 'create' command
 
 ```
-create -t gradle-project -l java -g org.example -a demo -j 17 -d devtools,lombok,web 
+create -t gradle-project -l java -g org.example -a demo -j 25 -d devtools,lombok,web 
 ```
 
 ### 'param' command
 
 **param** command shows possible values of parameters for command 'create'.
-```
-!!! Some values can be changed over time !!!
-```
-**Table 1** (values for the first of June 2023)
-
-| Param               | Possible values / Examples                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| -t, --type          | gradle-project, gradle-project-kotlin, gradle-build, maven-project, maven-build                                                                                                                                                                                                                                                                                                                                                                                                          |
-| -l, --language      | java, kotlin, groovy                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -b, --boot-version  | 3.1.1.BUILD-SNAPSHOT, 3.1.0.RELEASE, 3.0.8.BUILD-SNAPSHOT, 3.0.7.RELEASE, 2.7.13.BUILD-SNAPSHOT, 2.7.12.RELEASE                                                                                                                                                                                                                                                                                                                                                                          |
-| -g, --group-id      | com.example                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| -a, --artifact-id   | demo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -n, --name          | demo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| -p, --packaging     | jar, war                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| -j, --java-version  | 20, 17, 11, 1.8                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| -d, --dependencies  | native, devtools, lombok, configuration-processor, docker-compose, web, webflux, graphql, data-rest, session, data-rest-explorer, hateoas, web-services, jersey, vaadin, thymeleaf, freemarker, mustache, groovy-templates, security, oauth2-client, oauth2-authorization-server, oauth2-resource-server, data-ldap, okta, jdbc, data-jpa, data-jdbc, data-r2dbc, mybatis, liquibase, flyway, jooq, db2, derby, h2, hsql, mariadb, sqlserver, mysql, oracle, postgresql, data-redis, ... |
 
 ### 'dependency' command
 
@@ -99,4 +88,4 @@ This app is licensed under the Apache License Version 2.0. See the LICENSE file 
 
 If you have any questions or suggestions, please feel free to reach out to me:
 
- - Email: spell.cli.tool@gmail.com
+ - Email: ivv.kopylov@gmail.com

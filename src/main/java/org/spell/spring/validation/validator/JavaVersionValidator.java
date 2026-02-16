@@ -3,7 +3,7 @@ package org.spell.spring.validation.validator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.spell.common.ShellHelper;
-import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.service.InitializerService;
 import org.spell.spring.validation.annotation.ValidJavaVersion;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class JavaVersionValidator extends AbstractConstraintValidator<ValidJavaV
     if (!versions.contains(javaVersion)) {
       shellHelper.printError(
           String.format("Incorrect '%s' parameter value. Possible values: [%s]",
-              InitializerConstant.JAVA_VERSION_PARAM,
+              CommandConstant.JAVA_VERSION_PARAM,
               String.join(", ", versions)));
       return false;
     }

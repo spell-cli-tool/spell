@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spell.common.ShellHelper;
-import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.service.InitializerService;
 import org.spell.spring.validation.annotation.ValidDependencies;
 import org.springframework.stereotype.Component;
@@ -25,13 +25,13 @@ public class DependenciesValidator extends AbstractConstraintValidator<ValidDepe
       return true;
     }
 
-    if (!InitializerConstant.DEPENDENCIES_PATTERN.matcher(dependencies).matches()
+    if (!CommandConstant.DEPENDENCIES_PATTERN.matcher(dependencies).matches()
         || dependencies.contains(",,")
         || dependencies.lastIndexOf(",") == dependencies.length() - 1) {
       shellHelper.printError(
           String.format("The value for '%s' must match the pattern %s. Example: web,lombok,security",
           "--dependencies",
-          InitializerConstant.DEPENDENCIES_PATTERN.pattern()));
+          CommandConstant.DEPENDENCIES_PATTERN.pattern()));
       return false;
     }
 

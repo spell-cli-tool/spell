@@ -3,7 +3,7 @@ package org.spell.spring.validation.validator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.spell.common.ShellHelper;
-import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.service.InitializerService;
 import org.spell.spring.validation.annotation.ValidBootVersion;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class BootVersionValidator extends AbstractConstraintValidator<ValidBootV
     if (!versions.contains(bootVersion)) {
       shellHelper.printError(
           String.format("Incorrect '%s' parameter value. Possible values: [%s]",
-              InitializerConstant.BOOT_VERSION_PARAM,
+              CommandConstant.BOOT_VERSION_PARAM,
               String.join(", ", versions)));
       return false;
     }

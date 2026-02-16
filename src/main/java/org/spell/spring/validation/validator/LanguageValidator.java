@@ -3,7 +3,7 @@ package org.spell.spring.validation.validator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.spell.common.ShellHelper;
-import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.service.InitializerService;
 import org.spell.spring.validation.annotation.ValidLanguage;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class LanguageValidator extends AbstractConstraintValidator<ValidLanguage
     if (!languages.contains(language)) {
       shellHelper.printError(
           String.format("Incorrect '%s' parameter value. Possible values: [%s]",
-              InitializerConstant.LANGUAGE_PARAM,
+              CommandConstant.LANGUAGE_PARAM,
               String.join(", ", languages)));
       return false;
     }

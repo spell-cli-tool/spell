@@ -3,7 +3,7 @@ package org.spell.spring.validation.validator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.spell.common.ShellHelper;
-import org.spell.spring.constant.InitializerConstant;
+import org.spell.spring.constant.CommandConstant;
 import org.spell.spring.validation.annotation.ValidArtifact;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -20,10 +20,10 @@ public class ArtifactValidator extends AbstractConstraintValidator<ValidArtifact
       return true;
     }
 
-    if (!InitializerConstant.ARTIFACT_PATTERN.matcher(artifact).matches()) {
+    if (!CommandConstant.ARTIFACT_PATTERN.matcher(artifact).matches()) {
       shellHelper.printError(String.format("The value for '%s' parameter must match the pattern %s. "
               + "Example: demo",
-          InitializerConstant.ARTIFACT_PARAM, InitializerConstant.ARTIFACT_PATTERN_VALUE));
+          CommandConstant.ARTIFACT_PARAM, CommandConstant.ARTIFACT_PATTERN_VALUE));
       return false;
     }
     

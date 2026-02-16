@@ -1,8 +1,11 @@
 package org.spell.spring.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spell.spring.Action;
 import org.spell.spring.client.model.MetadataDto;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,6 +21,9 @@ public class InitializerClient {
   }
 
   public MetadataDto retrieveMetadata() {
+    List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+    interceptors.add(new HeaderRequestInterceptor("Accept", properties.getAcceptHeader()));
+    restTemplate.setInterceptors(interceptors);
     MetadataDto response = restTemplate.getForObject(
         properties.getAddress() + properties.getMetadataPath(),
         MetadataDto.class);

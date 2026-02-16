@@ -20,6 +20,8 @@ import org.spell.spring.client.model.Reference;
 import org.spell.spring.client.model.TextElement;
 import org.spell.spring.client.model.TypeElement;
 import org.spell.spring.client.model.TypeValue;
+import org.spell.spring.config.SpellConfig;
+import org.spell.spring.config.Template;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -44,7 +46,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		Reference.class,
 		TextElement.class,
 		TypeElement.class,
-		TypeValue.class})
+		TypeValue.class,
+		SpellConfig.class,
+		Template.class})
 @SpringBootApplication
 public class SpellApplication {
 

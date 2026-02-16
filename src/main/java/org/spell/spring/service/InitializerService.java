@@ -24,8 +24,10 @@ import org.spell.spring.client.model.DependenciesValue;
 import org.spell.spring.client.model.MetadataDto;
 import org.spell.spring.client.model.MetadataValue;
 import org.spell.spring.client.model.TypeValue;
+import org.spell.spring.config.Template;
 import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -52,19 +54,54 @@ public class InitializerService {
     return metadata;
   }
 
-  public String defaultType() {
+  public String typeOrDefault(String type) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getType().getDefaultValue();
+    if (!StringUtils.hasText(type)) {
+      return metadata.getType().getDefaultValue();
+    }
+
+    var value = metadata.getType().getValues().stream().filter(x -> type.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? type : metadata.getType().getDefaultValue();
   }
 
-  public String defaultLanguage() {
-    MetadataDto metadata = retrieveMetadata();
-    return metadata.getLanguage().getDefaultValue();
+  public String typeFromTemplateOrDefault(Template template) {
+    String type = template != null && StringUtils.hasText(template.getType()) ? template.getType() : "";
+    return typeOrDefault(type);
   }
 
-  public String defaultBootVersion() {
+  public String languageOrDefault(String language) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getBootVersion().getDefaultValue();
+    if (!StringUtils.hasText(language)) {
+      return metadata.getLanguage().getDefaultValue();
+    }
+
+    var value = metadata.getLanguage().getValues().stream().filter(x -> language.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? language : metadata.getLanguage().getDefaultValue();
+  }
+
+  public String languageFromTemplateOrDefault(Template template) {
+    String language = template != null && StringUtils.hasText(template.getLanguage()) ? template.getLanguage() : "";
+    return languageOrDefault(language);
+  }
+
+  public String bootVersionOrDefault(String bootVersion) {
+    MetadataDto metadata = retrieveMetadata();
+
+    if (!StringUtils.hasText(bootVersion)) {
+      return metadata.getBootVersion().getDefaultValue();
+    }
+
+    var value = metadata.getBootVersion().getValues().stream().filter(x -> bootVersion.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? bootVersion : metadata.getBootVersion().getDefaultValue();
+  }
+
+  public String bootVersionFromTemplateOrDefault(Template template) {
+    String bootVersion = template != null && StringUtils.hasText(template.getBootVersion()) ?
+        template.getBootVersion() : "";
+    return bootVersionOrDefault(bootVersion);
   }
 
   public String defaultGroupId() {
@@ -72,24 +109,62 @@ public class InitializerService {
     return metadata.getGroupId().getDefaultValue();
   }
 
+  public String groupIdFromTemplateOrDefault(Template template) {
+    String groupId = template != null && StringUtils.hasText(template.getGroup()) ?
+        template.getGroup() : "";
+    return StringUtils.hasText(groupId) ? groupId : defaultGroupId();
+  }
+
   public String defaultArtifactId() {
     MetadataDto metadata = retrieveMetadata();
     return metadata.getArtifactId().getDefaultValue();
   }
 
-  public String defaultDescription() {
-    MetadataDto metadata = retrieveMetadata();
-    return metadata.getDescription().getDefaultValue();
+  public String artifactIdFromTemplateOrDefault(Template template) {
+    String artifactId = template != null && StringUtils.hasText(template.getArtifact()) ?
+        template.getArtifact() : "";
+    return StringUtils.hasText(artifactId) ? artifactId : defaultArtifactId();
   }
 
-  public String defaultPackaging() {
+  public String packagingOrDefault(String packaging) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getPackaging().getDefaultValue();
+
+    if (!StringUtils.hasText(packaging)) {
+      return metadata.getPackaging().getDefaultValue();
+    }
+
+    var value = metadata.getPackaging().getValues().stream().filter(x -> packaging.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? packaging : metadata.getPackaging().getDefaultValue();
   }
 
-  public String defaultJavaVersion() {
+  public String packagingFromTemplateOrDefault(Template template) {
+    String packaging = template != null && StringUtils.hasText(template.getPackaging()) ?
+        template.getPackaging() : "";
+    return packagingOrDefault(packaging);
+  }
+
+  public String javaVersionOrDefault(String javaVersion) {
     MetadataDto metadata = retrieveMetadata();
-    return metadata.getJavaVersion().getDefaultValue();
+
+    if (!StringUtils.hasText(javaVersion)) {
+      return metadata.getJavaVersion().getDefaultValue();
+    }
+
+    var value = metadata.getJavaVersion().getValues().stream().filter(x -> javaVersion.equals(x.getId())).findFirst();
+
+    return value.isPresent() ? javaVersion : metadata.getJavaVersion().getDefaultValue();
+  }
+
+  public String javaVersionFromTemplateOrDefault(Template template) {
+    String javaVersion = template != null && StringUtils.hasText(template.getJavaVersion()) ?
+        template.getJavaVersion() : "";
+    return javaVersionOrDefault(javaVersion);
+  }
+
+  public String dependenciesFromTemplate(Template template) {
+    return template != null && StringUtils.hasText(template.getDependencies()) ?
+        template.getDependencies() : "";
   }
 
   public List<SelectorItem<String>> retrieveTypes() {
