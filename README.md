@@ -19,8 +19,11 @@ Java version, and build system or build structure.
 create new Spring Boot projects with ease. Simply run the command and follow the prompts to create a new project.
 - **create**: Create a Spring Boot project non-interactively with params. See also 'dependency' and 'param' commands.
 - **config**: Show configuration file.
+- **set-group**: Set default group name.
+- **set-artifact**: Set default artifact name.
 - **set-template**: Create/replace template non-interactively with params. See also 'dependency' and 'param' commands.
 - **iset-template**: Create/replace template interactively.
+- **remove-template**: Remove template.
 
 ## All commands
 
@@ -31,7 +34,14 @@ create new Spring Boot projects with ease. Simply run the command and follow the
 - **dependency**: Show details about Spring dependencies
 - **param**: Show values (examples) for params of the 'create' command
 
+### Spell configuration commands
 
+- **config**: Show configuration file
+- **set-group**: Set default group name
+- **set-artifact**: Set default artifact name
+- **set-template**: Create/replace template
+- **iset-template**: Create/replace template interactively
+- **remove-template**: Remove template
 
 ### Basic OS commands
 
