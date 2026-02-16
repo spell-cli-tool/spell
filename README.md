@@ -67,7 +67,7 @@ All releases page: [https://github.com/spell-cli-tool/spell/releases](https://gi
 ### 'create' command
 
 ```
-create -t gradle-project -l java -g org.example -a demo -j 17 -d devtools,lombok,web 
+create -t gradle-project -l java -g org.example -a demo -j 25 -d devtools,lombok,web 
 ```
 
 ### 'param' command
